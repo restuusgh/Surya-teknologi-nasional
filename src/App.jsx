@@ -1,8 +1,11 @@
 import React from 'react'
+import AdminLogin from './Pages/Admin/AdminLogin'
 
 const App = () => {
   return (
-    <div className='text-pink-700'>App</div>
+    <div >
+      
+    </div>
   )
 }
 
