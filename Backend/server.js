@@ -6,6 +6,7 @@ const sequelize = require('./config/database');
 
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
+const contactRoutes = require("./routes/contactRoutes");
 
 const path = require('path');
 
@@ -22,6 +23,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // mount routes
 app.use('/api', publicRoutes);       // GET /api/products, /api/portfolio
 app.use('/api/admin', adminRoutes);  // POST /api/admin/login, and protected CRUD
+app.use('/api', contactRoutes);      // POST /api/contact
 
 // error handler
 app.use((err, req, res, next) => {
