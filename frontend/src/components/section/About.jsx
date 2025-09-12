@@ -11,7 +11,7 @@ const About = () => {
         {/* Gambar */}
         <div className="flex justify-center">
           <img
-            src="public/background.jpg"
+            src="public/bg-aboutme.jpg"
             alt="Tentang Kami"
             className="w-80 md:w-full max-w-md rounded-lg shadow-lg"
           />
