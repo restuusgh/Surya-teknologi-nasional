@@ -7,80 +7,93 @@ const BarangKami = () => {
       id: 1,
       name: "Automatic Barrier Gate MX 50",
       description: "Palang Parkir Otomatis",
-      image: "public/automatic.jpg",
+      image: "/automatic.jpg",
+      price: "Rp 12.000.000"
     },
     {
       id: 2,
       name: "Automatic Barrier Gate MX Servo",
       description: "Palang Parkir Otomatis",
-      image: "public/automatic2.jpg",
+      image: "/automatic2.jpg",
+      price: "Rp 14.000.000"
     },
     {
       id: 3,
       name: "Automatic Barrier Gate Servo",
       description: "Palang Parkir Otomatis",
-      image: "public/automatic3.jpg",
+      image: "/automatic3.jpg",
+      price: "Rp 13.500.000"
     },
     {
       id: 4,
       name: "Dispenser Tiket LED",
       description: "Mesin Tiket Otomatis",
-      image: "public/dispenser.jpg",
+      image: "/dispenser.jpg",
+      price: "Rp 8.000.000"
     },
     {
       id: 5,
       name: "Dispenser Tiket Perumahan",
       description: "Mesin Tiket Otomatis",
-      image: "public/dispenser2.jpg",
+      image: "/dispenser2.jpg",
+      price: "Rp 7.500.000"
     },
     {
       id: 6,
       name: "Dispenser Tiket Perumahan",
       description: "Mesin Tiket Otomatis",
-      image: "public/dispenser3.jpg",
+      image: "/dispenser3.jpg",
+      price: "Rp 7.000.000"
     },
     {
       id: 7,
       name: "Tripod Turnstile",
       description: "Alat Pengendali Akses",
-      image: "public/foto1.jpg",
+      image: "/foto1.jpg",
+      price: "Rp 9.500.000"
     },
     {
       id: 8,
-      name: "Flap barrier",
+      name: "Flap Barrier",
       description: "Sistem Pengendali Akses Otomatis",
-      image: "public/foto2.jpg",
+      image: "/foto2.jpg",
+      price: "Rp 16.000.000"
     },
     {
       id: 9,
       name: "Swing Barrier",
       description: "Palang Parkir Otomatis dengan Motor Servo",
-      image: "public/foto3.jpg",
+      image: "/foto3.jpg",
+      price: "Rp 15.000.000"
     },
     {
       id: 10,
       name: "Vehicle Loop Detector",
       description: "Sensor kendaraan untuk palang parkir otomatis",
-      image: "public/foto4.jpg",
+      image: "/foto4.jpg",
+      price: "Rp 1.500.000"
     },
     {
       id: 11,
       name: "UHF Reader",
       description: "Pembaca kartu RFID jarak jauh",
-      image: "public/foto5.jpg",
+      image: "/foto5.jpg",
+      price: "Rp 3.500.000"
     },
     {
       id: 12,
       name: "Controller MX 50",
       description: "Pengendali palang parkir otomatis",
-      image: "public/foto6.jpg",
+      image: "/foto6.jpg",
+      price: "Rp 2.000.000"
     },
     {
       id: 13,
       name: "Controller Servo",
       description: "Pengendali motor servo untuk palang parkir",
-      image: "public/foto7.jpg",
-    },
+      image: "/foto7.jpg",
+      price: "Rp 2.500.000"
+    }
   ];
 
   return (
@@ -88,7 +101,7 @@ const BarangKami = () => {
       id="barangkami"
       className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative"
     >
-      {/* Background particles - consistent with Home */}
+      {/* Background particles */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(15)].map((_, i) => (
           <motion.div
@@ -144,11 +157,7 @@ const BarangKami = () => {
               className="group bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 hover:border-slate-600/50 shadow-2xl rounded-2xl p-6 flex flex-col justify-between text-center transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: index * 0.1,
-                ease: "easeOut"
-              }}
+              transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
             >
@@ -159,7 +168,6 @@ const BarangKami = () => {
                   alt={product.name}
                   className="w-full h-48 object-cover rounded-xl group-hover:scale-110 transition-transform duration-500"
                 />
-                {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
               </div>
 
@@ -173,19 +181,22 @@ const BarangKami = () => {
                 </p>
               </div>
 
-              {/* CTA Button */}
-              <motion.button 
-                className="mt-6 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/25"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Beli Sekarang
-              </motion.button>
+              {/* Harga + CTA */}
+              <div className="mt-6">
+                <span className="block text-lg font-semibold text-cyan-400 mb-4">{product.price}</span>
+                <motion.button 
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/25"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Beli Sekarang
+                </motion.button>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA Section */}
+        {/* Bottom CTA */}
         <motion.div
           className="text-center mt-16 p-8 bg-slate-800/30 backdrop-blur-sm rounded-3xl border border-slate-700/50"
           initial={{ opacity: 0, y: 30 }}

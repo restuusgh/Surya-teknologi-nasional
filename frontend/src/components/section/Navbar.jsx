@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Car } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 
@@ -8,17 +8,16 @@ const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
 
-  // Menu list - ubah link menjadi path
+  // Menu list - sekarang pakai route dengan icons
   const menuItems = [
-    { name: "HOME", path: "/", icon: "🏠" },
-    { name: "BARANG KAMI", path: "/barangkami", icon: "📦" },
-    { name: "TENTANG KAMI", path: "/about", icon: "ℹ" },
-    { name: "LAYANAN KAMI", path: "/services", icon: "🔧" },
-    { name: "PORTOFOLIO", path: "/portfolio", icon: "💼" },
-    { name: "KONTAK KAMI", path: "/contact", icon: "📞" },
+    { name: "HOME", link: "/", icon: "🏠" },
+    { name: "BARANG KAMI", link: "/barangkami", icon: "📦" },
+    { name: "TENTANG KAMI", link: "/about", icon: "ℹ️" },
+    { name: "LAYANAN KAMI", link: "/services", icon: "🔧" },
+    { name: "PORTOFOLIO", link: "/portfolio", icon: "💼" },
+    { name: "KONTAK KAMI", link: "/contact", icon: "📞" },
   ];
 
-  // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
@@ -53,49 +52,53 @@ const Navbar = () => {
   return (
     <>
       <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800/50 shadow-2xl"
-    >
-      {/* Background particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={`absolute w-1 h-1 ${
-              i % 3 === 0 ? 'bg-cyan-400/30' :
-              i % 3 === 1 ? 'bg-blue-500/30' :
-              'bg-emerald-400/30'
-            } rounded-full`}
-            style={{
-              left: `${10 + (i * 75) % 80}%`,
-              top: `${20 + (i * 60) % 60}%`,
-            }}
-            animate={{
-              y: [-10, 10, -10],
-              opacity: [0.3, 0.8, 0.3],
-              scale: [0.5, 1.2, 0.5]
-            }}
-            transition={{
-              duration: 3 + i,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5
-            }}
-          />
-        ))}
-      </div>
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800/50 shadow-2xl"
+      >
+        {/* Background particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className={`absolute w-1 h-1 ${
+                i % 3 === 0 ? 'bg-cyan-400/30' :
+                i % 3 === 1 ? 'bg-blue-500/30' :
+                'bg-emerald-400/30'
+              } rounded-full`}
+              style={{
+                left: `${10 + (i * 75) % 80}%`,
+                top: `${20 + (i * 60) % 60}%`,
+              }}
+              animate={{
+                y: [-10, 10, -10],
+                opacity: [0.3, 0.8, 0.3],
+                scale: [0.5, 1.2, 0.5]
+              }}
+              transition={{
+                duration: 3 + i,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.5
+              }}
+            />
+          ))}
+        </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-18">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
-                <img src="logostn.png"
-                 alt="" 
-                 className="w-10 h-10 object-contain"/>
+              <motion.img
+                src="logostn.png"
+                alt="Logo STN"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-lg bg-white/10 p-1"
+                whileHover={{ rotate: 5, scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              />
               <div className="flex flex-col">
-                <span className="font-bold text-white text-lg sm:text-xl">
+                <span className="font-bold text-white text-sm sm:text-lg">
                   Surya Teknologi Nasional
                 </span>
                 <span className="text-xs text-slate-400 hidden sm:block">
@@ -106,34 +109,36 @@ const Navbar = () => {
 
             {/* Desktop Menu */}
             <nav className="hidden lg:flex xl:space-x-8 lg:space-x-6">
-              {menuItems.map((item, idx) => (
-                <Link
-                  key={idx}
-                  to={item.path}
-                  className={`relative text-slate-300 hover:text-cyan-400 transition-all duration-300 text-sm xl:text-base font-medium whitespace-nowrap group ${
-                    location.pathname === item.path ? "text-cyan-400" : ""
-                  }`}
-                >
-                  {item.name}
-                  {/* Active indicator */}
-                  {location.pathname === item.path && (
+              {menuItems.map((item, idx) => {
+                const isActive = location.pathname === item.link;
+                return (
+                  <Link
+                    key={idx}
+                    to={item.link}
+                    className={`relative text-slate-300 hover:text-cyan-400  transition-all duration-300 text-sm xl:text-base font-medium whitespace-nowrap group ${
+                      isActive ? "text-cyan-400" : ""
+                    }`}
+                  >
+                    {item.name}
+                    {isActive && (
+                      <motion.div
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
+                        layoutId="activeTab"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
+                    {/* Hover indicator */}
                     <motion.div
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
-                      layoutId="activeTab"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
+                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400/50 to-blue-500/50 rounded-full opacity-0 group-hover:opacity-100"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
                       transition={{ duration: 0.3 }}
                     />
-                  )}
-                  {/* Hover indicator */}
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400/50 to-blue-500/50 rounded-full opacity-0 group-hover:opacity-100"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Hamburger */}
@@ -172,6 +177,17 @@ const Navbar = () => {
         </div>
       </motion.header>
 
+      {/* Custom CSS untuk menghilangkan scrollbar */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .custom-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+
       {/* Sidebar dengan Motion */}
       <AnimatePresence>
         {isOpen && (
@@ -194,6 +210,10 @@ const Navbar = () => {
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 80, damping: 20 }}
               className="fixed top-0 left-0 h-full w-80 bg-slate-900 shadow-2xl z-50 flex flex-col border-r border-slate-800"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
             >
               {/* Sidebar particles background */}
               <div className="absolute inset-0 overflow-hidden">
@@ -230,12 +250,14 @@ const Navbar = () => {
               <div className="relative z-10 bg-gradient-to-r from-slate-800 to-slate-700 p-6 border-b border-slate-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                      <img src="logostn.png" 
-                      alt="" 
-                      className="w-10 h-10 object-contain"/>
+                    <img 
+                      src="logostn.png" 
+                      alt="Logo STN" 
+                      className="w-12 h-12 object-contain rounded-lg bg-white/10 p-1"
+                    />
                     <div>
                       <h1 className="text-lg font-bold text-white">
-                        Surya Teknelogi Nasional
+                        Surya Teknologi Nasional
                       </h1>
                       <p className="text-xs text-slate-400">
                         Teknologi Keamanan Masa Depan
@@ -253,39 +275,54 @@ const Navbar = () => {
                 </div>
               </div>
 
-              {/* Navigation Menu */}
-              <nav className="relative z-10 py-4 flex-1 overflow-y-auto">
-                {menuItems.map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ x: -50, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: idx * 0.1, duration: 0.3 }}
-                  >
-                    <Link
-                      to={item.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-4 px-6 py-4 text-slate-300 transition-all duration-300 relative group ${
-                        location.pathname === item.path 
-                          ? "bg-slate-800/80 text-cyan-400 border-r-2 border-cyan-400" 
-                          : "hover:bg-slate-800/50 hover:text-cyan-300"
-                      }`}
+              {/* Navigation Menu - Tanpa scrollbar */}
+              <nav 
+                className="relative z-10 py-4 flex-1 custom-scrollbar"
+                style={{
+                  overflowY: 'auto',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}
+              >
+                {menuItems.map((item, idx) => {
+                  const isActive = location.pathname === item.link;
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ x: -50, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: idx * 0.1, duration: 0.3 }}
                     >
-                      <span className="text-xl filter grayscale group-hover:filter-none transition-all duration-300">{item.icon}</span>
-                      <span className="font-medium">{item.name}</span>
-                      
-                      {/* Active indicator */}
-                      {location.pathname === item.path && (
-                        <motion.div
-                          className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-blue-500"
-                          layoutId="sidebarActive"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                        />
-                      )}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        to={item.link}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-4 px-6 py-4 text-slate-300 transition-all duration-300 relative group ${
+                          isActive 
+                            ? "bg-slate-800/80 text-cyan-400 border-r-2 border-cyan-400" 
+                            : "hover:bg-slate-800/50 hover:text-cyan-300"
+                        }`}
+                      >
+                        <motion.span 
+                          className="text-xl filter grayscale group-hover:filter-none transition-all duration-300"
+                          whileHover={{ scale: 1.2, rotate: -10 }}
+                        >
+                          {item.icon}
+                        </motion.span>
+                        <span className="font-medium">{item.name}</span>
+                        
+                        {/* Active indicator */}
+                        {isActive && (
+                          <motion.div
+                            className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-blue-500"
+                            layoutId="sidebarActive"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          />
+                        )}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </nav>
 
               {/* Divider */}
@@ -297,22 +334,31 @@ const Navbar = () => {
                   <span className="text-cyan-400">📧</span> Hubungi Kami
                 </h3>
                 <div className="space-y-2 text-sm text-slate-400">
-                  <p className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200">
+                  <motion.p 
+                    className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
                     <span className="text-blue-400">📞</span> (021) 123-4567
-                  </p>
-                  <p className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200">
-                    <span className="text-emerald-400">✉</span> info@autoparkpro.id
-                  </p>
-                  <p className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200">
+                  </motion.p>
+                  <motion.p 
+                    className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
+                    <span className="text-emerald-400">✉️</span> info@stn.co.id
+                  </motion.p>
+                  <motion.p 
+                    className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
                     <span className="text-purple-400">📍</span> Jakarta, Indonesia
-                  </p>
+                  </motion.p>
                 </div>
               </div>
 
               {/* Footer */}
               <div className="relative z-10 p-4 bg-slate-800 text-center border-t border-slate-700">
                 <p className="text-xs text-slate-500">
-                  © 2024 AutoPark Pro - Parkir Otomatis Masa Depan
+                  © 2024 Surya Teknologi Nasional
                 </p>
               </div>
             </motion.div>

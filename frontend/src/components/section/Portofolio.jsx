@@ -161,7 +161,7 @@ const Portfolio = () => {
           Hasil Kerja Kami 
         </h2>
         <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-          Tepat Guna | Sesua Tujuan dari Client Kami
+          Tepat Guna | Sesuai Tujuan dari Client Kami
         </p>
 
         {/* Grid */}

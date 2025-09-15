@@ -62,11 +62,10 @@ const Home = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
-                  <Car className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-r  rounded-lg flex items-center justify-center">
                 </div>
                 <span className="text-2xl font-bold text-white">
-                  AutoPark Pro
+                  Selamat Datang Di
                 </span>
               </motion.div>
 
@@ -77,12 +76,12 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Parkir{" "}
+                PT.{" "}
                 <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 bg-clip-text text-transparent">
-                  Otomatis
+                 Surya Teknologi
                 </span>
                 <br />
-                Masa Depan
+                Nasisonal
               </motion.h1>
 
               {/* Typing Effect */}
@@ -135,12 +134,12 @@ const Home = () => {
                 transition={{ delay: 1.5, duration: 0.8 }}
               >
                 <button className="group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center space-x-2">
-                  <span>Mulai Sekarang</span>
+                  <span>Hubungi Kami</span>
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button className="group border-2 border-slate-600 hover:border-cyan-400 text-slate-300 hover:text-cyan-400 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2">
                   <Play className="w-5 h-5" />
-                  <span>Lihat Demo</span>
+                  <span>Lihat Layanan</span>
                 </button>
               </motion.div>
             </div>
