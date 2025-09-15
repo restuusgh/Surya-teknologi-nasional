@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 const Contact = () => {
-  // State untuk form
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,12 +11,12 @@ const Contact = () => {
 
   const [status, setStatus] = useState(""); // status feedback
 
-  // Handle perubahan input
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle submit form
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("Mengirim...");
