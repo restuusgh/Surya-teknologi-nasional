@@ -12,33 +12,24 @@ import {
   Image,
   FileText
 } from 'lucide-react';
-import { Product } from '../types';
 
-interface AdminDashboardProps {
-  products: Product[];
-  onAddProduct: (product: Omit<Product, 'id'>) => void;
-  onUpdateProduct: (id: number, product: Omit<Product, 'id'>) => void;
-  onDeleteProduct: (id: number) => void;
-  onLogout: () => void;
-}
-
-const AdminDashboard: React.FC<AdminDashboardProps> = ({
+const AdminDashboard = ({
   products,
   onAddProduct,
   onUpdateProduct,
   onDeleteProduct,
   onLogout
 }) => {
-  const [isEditing, setIsEditing] = useState<number | null>(null);
+  const [isEditing, setIsEditing] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [editForm, setEditForm] = useState<Omit<Product, 'id'>>({
+  const [editForm, setEditForm] = useState({
     name: '',
     description: '',
     image: '',
     price: ''
   });
 
-  const handleEdit = (product: Product) => {
+  const handleEdit = (product) => {
     setIsEditing(product.id);
     setEditForm({
       name: product.name,
