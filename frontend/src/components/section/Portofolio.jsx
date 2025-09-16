@@ -4,7 +4,7 @@ const projects = [
   { id: 1, title: "Cikao Park Purwakarta", img: "/Cikao-Gate.jpeg" },
   { id: 2, title: "Le Giant Pool & Bar", img: "/Pintu Masuk Pool.jpg" },
   { id: 3, title: "Perumahan Katapang", img: "/Katapang.jpg" },
-  { id: 4, title: "RS Permata Cirebon", img: "/RSUD-permata.jpg" },
+  { id: 4, title: "RS Permata Cirebon", img: "/RSUD-Permata.jpg" },
   { id: 5, title: "Perbaikan Sistem RSUD Gunung Jati", img: "/RSUD.jpg" },
   { id: 6, title: "Area 52 Studio", img: "/area52studio.png" },
   { id: 7, title: "Batik Putri Pratiwi", img: "/Batik-Pratiwi.png" },

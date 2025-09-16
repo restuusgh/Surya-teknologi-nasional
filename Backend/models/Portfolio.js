@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
 const Portfolio = sequelize.define('Portfolio', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -11,4 +11,4 @@ const Portfolio = sequelize.define('Portfolio', {
   timestamps: true
 });
 
-module.exports = Portfolio;
+export default Portfolio;

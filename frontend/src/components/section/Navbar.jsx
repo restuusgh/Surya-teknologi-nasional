@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [showServices, setShowServices] = useState(false); // submenu sidebar
+  const [servicesHover, setServicesHover] = useState(false);
   const location = useLocation();
 
+  // Menu list - sekarang pakai route dengan icons
   const menuItems = [
     { name: "HOME", link: "/", icon: "🏠" },
     { name: "BARANG KAMI", link: "/barangkami", icon: "📦" },
     { name: "TENTANG KAMI", link: "/about", icon: "ℹ️" },
-    { name: "LAYANAN KAMI", link: "/services", icon: "🔧" },
+    { 
+      name: "LAYANAN KAMI", 
+      link: "/services", 
+      icon: "🔧",
+      submenu: [
+        { name: "Semua Layanan", link: "/services" },
+        { name: "Perangkat Lunak", link: "/services/software" },
+        { name: "Sistem Parkir", link: "/services/parking-system" },
+        { name: "Sistem Ticketing", link: "/services/ticketing-system" },
+        { name: "Gate Perumahan", link: "/services/residential-gate" }
+      ]
+    },
     { name: "PORTOFOLIO", link: "/portfolio", icon: "💼" },
     { name: "KONTAK KAMI", link: "/contact", icon: "📞" },
   ];
@@ -22,17 +34,22 @@ const Navbar = () => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      if (!mobile && isOpen) setIsOpen(false);
+      if (!mobile && isOpen) {
+        setIsOpen(false);
+      }
     };
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [isOpen]);
 
+  // Tutup menu ketika navigasi terjadi
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
+  // Prevent body scroll when sidebar is open
   useEffect(() => {
     if (isOpen && isMobile) {
       document.body.style.overflow = "hidden";
@@ -44,23 +61,134 @@ const Navbar = () => {
     };
   }, [isOpen, isMobile]);
 
+  // Komponen untuk item menu mobile dengan submenu
+  const MobileMenuItem = ({ item, idx }) => {
+    const [submenuOpen, setSubmenuOpen] = useState(false);
+    const isActive = location.pathname === item.link;
+    const hasSubmenu = item.submenu;
+
+    return (
+      <div key={idx}>
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: idx * 0.1, duration: 0.3 }}
+        >
+          <Link
+            to={item.link}
+            onClick={(e) => {
+              if (hasSubmenu) {
+                e.preventDefault();
+                setSubmenuOpen(!submenuOpen);
+              } else {
+                setIsOpen(false);
+              }
+            }}
+            className={`flex items-center justify-between gap-4 px-6 py-4 text-slate-300 transition-all duration-300 relative group ${
+              isActive 
+                ? "bg-slate-800/80 text-cyan-400 border-r-2 border-cyan-400" 
+                : "hover:bg-slate-800/50 hover:text-cyan-300"
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <motion.span 
+                className="text-xl filter grayscale group-hover:filter-none transition-all duration-300"
+                whileHover={{ scale: 1.2, rotate: -10 }}
+              >
+                {item.icon}
+              </motion.span>
+              <span className="font-medium">{item.name}</span>
+            </div>
+            
+            {hasSubmenu && (
+              <ChevronDown 
+                size={16} 
+                className={`transition-transform duration-300 ${submenuOpen ? 'rotate-180' : ''}`} 
+              />
+            )}
+            
+            {/* Active indicator */}
+            {isActive && (
+              <motion.div
+                className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-blue-500"
+                layoutId="sidebarActive"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              />
+            )}
+          </Link>
+        </motion.div>
+        
+        {/* Submenu for mobile */}
+        {hasSubmenu && submenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="bg-slate-800/50 overflow-hidden"
+          >
+            {item.submenu.map((subItem, subIdx) => (
+              <Link
+                key={subIdx}
+                to={subItem.link}
+                onClick={() => setIsOpen(false)}
+                className="block pl-16 pr-6 py-3 text-sm text-slate-400 hover:text-cyan-400 hover:bg-slate-700/30 transition-all duration-200"
+              >
+                {subItem.name}
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <>
-      {/* HEADER */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800/50 shadow-2xl"
       >
-        <div className="relative z-10 max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
+        {/* Background particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className={`absolute w-1 h-1 ${
+                i % 3 === 0 ? 'bg-cyan-400/30' :
+                i % 3 === 1 ? 'bg-blue-500/30' :
+                'bg-emerald-400/30'
+              } rounded-full`}
+              style={{
+                left: `${10 + (i * 75) % 80}%`,
+                top: `${20 + (i * 60) % 60}%`,
+              }}
+              animate={{
+                y: [-10, 10, -10],
+                opacity: [0.3, 0.8, 0.3],
+                scale: [0.5, 1.2, 0.5]
+              }}
+              transition={{
+                duration: 3 + i,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.5
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16 sm:h-18">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
               <motion.img
                 src="logostn.png"
                 alt="Logo STN"
-                className="w-10 h-10 object-contain rounded-lg bg-white/10 p-1"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-lg bg-white/10 p-1"
                 whileHover={{ rotate: 5, scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               />
@@ -78,126 +206,262 @@ const Navbar = () => {
             <nav className="hidden lg:flex xl:space-x-8 lg:space-x-6">
               {menuItems.map((item, idx) => {
                 const isActive = location.pathname === item.link;
-
-                // Dropdown khusus LAYANAN KAMI
-                if (item.name === "LAYANAN KAMI") {
-                  return (
-                    <div key={idx} className="relative group">
-                      <span
-                        className={`cursor-pointer relative text-slate-300 hover:text-cyan-400 transition-all duration-300 text-sm xl:text-base font-medium ${
-                          isActive ? "text-cyan-400" : ""
-                        }`}
-                      >
-                        {item.name}
-                      </span>
-                      <div className="absolute left-0 top-full mt-2 w-56 bg-slate-900 border border-slate-700 rounded-lg shadow-xl opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 z-50">
-                        <ul className="flex flex-col p-2">
-                          <li>
-                            <Link to="/services" className="block px-4 py-2 rounded-md hover:bg-slate-800 hover:text-cyan-400">Semua Layanan</Link>
-                          </li>
-                          <li>
-                            <Link to="/layanan/perangkat-lunak" className="block px-4 py-2 rounded-md hover:bg-slate-800 hover:text-cyan-400">Perangkat Lunak</Link>
-                          </li>
-                          <li>
-                            <Link to="/layanan/sistem-parkir" className="block px-4 py-2 rounded-md hover:bg-slate-800 hover:text-cyan-400">Sistem Parkir</Link>
-                          </li>
-                          <li>
-                            <Link to="/layanan/sistem-ticketing" className="block px-4 py-2 rounded-md hover:bg-slate-800 hover:text-cyan-400">Sistem Ticketing</Link>
-                          </li>
-                          <li>
-                            <Link to="/layanan/gate-perumahan" className="block px-4 py-2 rounded-md hover:bg-slate-800 hover:text-cyan-400">Gate Perumahan</Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  );
-                }
-
+                const hasSubmenu = item.submenu;
+                
                 return (
-                  <Link
+                  <div 
                     key={idx}
-                    to={item.link}
-                    className={`relative text-slate-300 hover:text-cyan-400 transition-all duration-300 text-sm xl:text-base font-medium ${
-                      isActive ? "text-cyan-400" : ""
-                    }`}
+                    className="relative"
+                    onMouseEnter={() => hasSubmenu && setServicesHover(true)}
+                    onMouseLeave={() => hasSubmenu && setServicesHover(false)}
                   >
-                    {item.name}
-                  </Link>
+                    <Link
+                      to={item.link}
+                      className={`relative text-slate-300 hover:text-cyan-400 transition-all duration-300 text-sm xl:text-base font-medium whitespace-nowrap group flex items-center ${
+                        isActive ? "text-cyan-400" : ""
+                      }`}
+                    >
+                      {item.name}
+                      {hasSubmenu && (
+                        <ChevronDown 
+                          size={16} 
+                          className={`ml-1 transition-transform duration-300 ${servicesHover ? 'rotate-180' : ''}`} 
+                        />
+                      )}
+                      {isActive && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"
+                          layoutId="activeTab"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.3 }}
+                        />
+                      )}
+                      {/* Hover indicator */}
+                      <motion.div
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400/50 to-blue-500/50 rounded-full opacity-0 group-hover:opacity-100"
+                        initial={{ scaleX: 0 }}
+                        whileHover={{ scaleX: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </Link>
+                    
+                    {/* Submenu for LAYANAN KAMI */}
+                    {hasSubmenu && (
+                      <AnimatePresence>
+                        {servicesHover && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute left-0 top-full mt-2 w-48 bg-slate-800/95 backdrop-blur-sm rounded-lg shadow-xl border border-slate-700/50 overflow-hidden z-50"
+                          >
+                            {item.submenu.map((subItem, subIdx) => (
+                              <Link
+                                key={subIdx}
+                                to={subItem.link}
+                                className="block px-4 py-3 text-sm text-slate-300 hover:text-cyan-400 hover:bg-slate-700/50 transition-all duration-200"
+                                onClick={() => setServicesHover(false)}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    )}
+                  </div>
                 );
               })}
             </nav>
 
             {/* Hamburger */}
             <motion.button
-              className="lg:hidden text-3xl focus:outline-none text-slate-300"
+              className="lg:hidden text-2xl sm:text-3xl focus:outline-none text-slate-300 hover:text-cyan-400 transition-colors duration-300 p-2 relative z-50 rounded-lg hover:bg-slate-800/50"
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {isOpen ? <X /> : <Menu />}
+              <AnimatePresence mode="wait">
+                {isOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.button>
           </div>
         </div>
       </motion.header>
 
-      {/* SIDEBAR */}
+      {/* Custom CSS untuk menghilangkan scrollbar */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .custom-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+
+      {/* Sidebar dengan Motion */}
       <AnimatePresence>
         {isOpen && (
-          <motion.aside
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="fixed inset-y-0 left-0 w-72 bg-slate-900 shadow-xl z-50 overflow-y-auto custom-scrollbar"
-          >
-            <div className="flex flex-col p-6 gap-4">
-              {menuItems.map((item, idx) => {
-                const isActive = location.pathname === item.link;
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black lg:hidden"
+              style={{ zIndex: 45 }}
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Sidebar */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 80, damping: 20 }}
+              className="fixed top-0 left-0 h-full w-80 bg-slate-900 shadow-2xl z-50 flex flex-col border-r border-slate-800"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
+            >
+              {/* Sidebar particles background */}
+              <div className="absolute inset-0 overflow-hidden">
+                {[...Array(12)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className={`absolute w-2 h-2 ${
+                      i % 4 === 0 ? 'bg-cyan-400/20' :
+                      i % 4 === 1 ? 'bg-blue-500/20' :
+                      i % 4 === 2 ? 'bg-emerald-400/20' :
+                      'bg-purple-400/20'
+                    } rounded-sm`}
+                    style={{
+                      left: `${5 + (i * 67) % 90}%`,
+                      top: `${10 + (i * 43) % 80}%`,
+                    }}
+                    animate={{
+                      y: [-15, 15, -15],
+                      x: [-10, 10, -10],
+                      opacity: [0.2, 0.5, 0.2],
+                      scale: [0.8, 1.3, 0.8]
+                    }}
+                    transition={{
+                      duration: 4 + (i % 3),
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: i * 0.3
+                    }}
+                  />
+                ))}
+              </div>
 
-                if (item.name === "LAYANAN KAMI") {
-                  return (
-                    <div key={idx} className="flex flex-col">
-                      <button
-                        className={`flex justify-between items-center px-4 py-2 rounded-lg text-left text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition ${
-                          isActive ? "text-cyan-400" : ""
-                        }`}
-                        onClick={() => setShowServices(!showServices)}
-                      >
-                        <span>{item.icon} {item.name}</span>
-                        {showServices ? <ChevronUp size={18}/> : <ChevronDown size={18}/>}
-                      </button>
-                      <AnimatePresence>
-                        {showServices && (
-                          <motion.ul
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="ml-6 mt-2 flex flex-col gap-1 overflow-hidden"
-                          >
-                            <li><Link to="/services" className="block px-4 py-2 rounded-md text-slate-300 hover:bg-slate-800 hover:text-cyan-400">Semua Layanan</Link></li>
-                            <li><Link to="/layanan/perangkat-lunak" className="block px-4 py-2 rounded-md text-slate-300 hover:bg-slate-800 hover:text-cyan-400">Perangkat Lunak</Link></li>
-                            <li><Link to="/layanan/sistem-parkir" className="block px-4 py-2 rounded-md text-slate-300 hover:bg-slate-800 hover:text-cyan-400">Sistem Parkir</Link></li>
-                            <li><Link to="/layanan/sistem-ticketing" className="block px-4 py-2 rounded-md text-slate-300 hover:bg-slate-800 hover:text-cyan-400">Sistem Ticketing</Link></li>
-                            <li><Link to="/layanan/gate-perumahan" className="block px-4 py-2 rounded-md text-slate-300 hover:bg-slate-800 hover:text-cyan-400">Gate Perumahan</Link></li>
-                          </motion.ul>
-                        )}
-                      </AnimatePresence>
+              {/* Sidebar Header */}
+              <div className="relative z-10 bg-gradient-to-r from-slate-800 to-slate-700 p-6 border-b border-slate-700">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src="logostn.png" 
+                      alt="Logo STN" 
+                      className="w-12 h-12 object-contain rounded-lg bg-white/10 p-1"
+                    />
+                    <div>
+                      <h1 className="text-lg font-bold text-white">
+                        Surya Teknologi Nasional
+                      </h1>
+                      <p className="text-xs text-slate-400">
+                        Teknologi Keamanan Masa Depan
+                      </p>
                     </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={idx}
-                    to={item.link}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition ${
-                      isActive ? "text-cyan-400" : ""
-                    }`}
+                  </div>
+                  <motion.button
+                    onClick={() => setIsOpen(false)}
+                    className="text-slate-300 hover:text-cyan-400 transition-colors duration-200 p-2 rounded-lg hover:bg-slate-800/50"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {item.icon} {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </motion.aside>
+                    <X size={24} />
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Navigation Menu - Tanpa scrollbar */}
+              <nav 
+                className="relative z-10 py-4 flex-1 custom-scrollbar"
+                style={{
+                  overflowY: 'auto',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}
+              >
+                {menuItems.map((item, idx) => (
+                  <MobileMenuItem key={idx} item={item} idx={idx} />
+                ))}
+              </nav>
+
+              {/* Divider */}
+              <div className="relative z-10 mx-6 border-t border-slate-700"></div>
+
+              {/* Contact Info */}
+              <div className="relative z-10 p-6 bg-slate-800/50 backdrop-blur-sm">
+                <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                  <span className="text-cyan-400">📧</span> Hubungi Kami
+                </h3>
+                <div className="space-y-2 text-sm text-slate-400">
+                  <motion.p 
+                    className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
+                    <span className="text-blue-400">📞</span> (021) 123-4567
+                  </motion.p>
+                  <motion.p 
+                    className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
+                    <span className="text-emerald-400">✉️</span> info@stn.co.id
+                  </motion.p>
+                  <motion.p 
+                    className="flex items-center gap-2 hover:text-cyan-300 transition-colors duration-200 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
+                    <span className="text-purple-400">📍</span> Jakarta, Indonesia
+                  </motion.p>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="relative z-10 p-4 bg-slate-800 text-center border-t border-slate-700">
+                <p className="text-xs text-slate-500">
+                  © 2024 Surya Teknologi Nasional
+                </p>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

@@ -1,88 +1,163 @@
-const Admin = require('../models/Admin');
-const Product = require('../models/Product');
-const Portfolio = require('../models/Portfolio');
-const bcrypt = require('bcryptjs');
-const { generateToken } = require('../middlewares/auth');
+// controllers/adminController.js
+import Admin from '../models/Admin.js';
+import Product from '../models/Product.js';
+import Portfolio from '../models/Portfolio.js';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../middlewares/auth.js';
 
-// Admin login
-exports.login = async (req, res) => {
+/**
+ * =======================
+ *   AUTHENTICATION ADMIN
+ * =======================
+ */
+const login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
+    // Cari admin berdasarkan email
     const admin = await Admin.findOne({ where: { email } });
-    if (!admin) return res.status(401).json({ message: 'Invalid credentials' });
+    if (!admin) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
+    // Bandingkan password dengan bcrypt
     const match = await bcrypt.compare(password, admin.password || '');
-    if (!match) return res.status(401).json({ message: 'Invalid credentials' });
+    if (!match) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
+    // Generate JWT token
     const token = generateToken(admin);
-    res.json({ token, admin: { id: admin.id, email: admin.email, firstName: admin.firstName, lastName: admin.lastName } });
+
+    res.json({
+      token,
+      admin: {
+        id: admin.id,
+        email: admin.email,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// PRODUCTS CRUD
-exports.createProduct = async (req, res) => {
+/**
+ * =======================
+ *        PRODUCTS
+ * =======================
+ */
+const createProduct = async (req, res) => {
   try {
     const { name, description, price, stock, image } = req.body;
-    const p = await Product.create({ name, description, price, stock, image });
-    res.status(201).json(p);
+
+    const product = await Product.create({
+      name,
+      description,
+      price,
+      stock,
+      image,
+    });
+
+    res.status(201).json(product);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
   try {
-    const p = await Product.findByPk(req.params.id);
-    if (!p) return res.status(404).json({ message: 'Product not found' });
-    await p.update(req.body);
-    res.json(p);
+    const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    await product.update(req.body);
+    res.json(product);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
-    const p = await Product.findByPk(req.params.id);
-    if (!p) return res.status(404).json({ message: 'Product not found' });
-    await p.destroy();
-    res.json({ message: 'Product deleted' });
+    const product = await Product.findByPk(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    await product.destroy();
+    res.json({ message: 'Product deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// PORTFOLIO CRUD
-exports.createPortfolio = async (req, res) => {
+/**
+ * =======================
+ *       PORTFOLIOS
+ * =======================
+ */
+const createPortfolio = async (req, res) => {
   try {
     const { title, description, image } = req.body;
-    const p = await Portfolio.create({ title, description, image });
-    res.status(201).json(p);
+
+    const portfolio = await Portfolio.create({
+      title,
+      description,
+      image,
+    });
+
+    res.status(201).json(portfolio);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.updatePortfolio = async (req, res) => {
+const updatePortfolio = async (req, res) => {
   try {
-    const p = await Portfolio.findByPk(req.params.id);
-    if (!p) return res.status(404).json({ message: 'Portfolio not found' });
-    await p.update(req.body);
-    res.json(p);
+    const portfolio = await Portfolio.findByPk(req.params.id);
+
+    if (!portfolio) {
+      return res.status(404).json({ message: 'Portfolio not found' });
+    }
+
+    await portfolio.update(req.body);
+    res.json(portfolio);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.deletePortfolio = async (req, res) => {
+const deletePortfolio = async (req, res) => {
   try {
-    const p = await Portfolio.findByPk(req.params.id);
-    if (!p) return res.status(404).json({ message: 'Portfolio not found' });
-    await p.destroy();
-    res.json({ message: 'Portfolio deleted' });
+    const portfolio = await Portfolio.findByPk(req.params.id);
+
+    if (!portfolio) {
+      return res.status(404).json({ message: 'Portfolio not found' });
+    }
+
+    await portfolio.destroy();
+    res.json({ message: 'Portfolio deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+};
+
+/**
+ * =======================
+ *    EXPORT CONTROLLER
+ * =======================
+ */
+export default {
+  login,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  createPortfolio,
+  updatePortfolio,
+  deletePortfolio,
 };

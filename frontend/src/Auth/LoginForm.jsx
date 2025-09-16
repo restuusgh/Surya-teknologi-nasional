@@ -14,13 +14,29 @@ const LoginForm = ({ onLogin }) => {
     setError('');
     setIsLoading(true);
 
-    // Simulate loading delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: username, password }),
+      });
 
-    const success = onLogin ? onLogin(username, password) : false;
-    if (!success) {
-      setError('Username atau password salah');
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Username atau password salah");
+      } else {
+        // simpan token ke localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("admin", JSON.stringify(data.admin));
+
+        if (onLogin) onLogin(data.admin); // callback kalau ada
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Terjadi kesalahan pada server");
     }
+
     setIsLoading(false);
   };
 
@@ -85,7 +101,7 @@ const LoginForm = ({ onLogin }) => {
             {/* Username */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Username
+                Email
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -94,7 +110,7 @@ const LoginForm = ({ onLogin }) => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300"
-                  placeholder="Masukkan username"
+                  placeholder="Masukkan email"
                   required
                 />
               </div>
@@ -159,15 +175,6 @@ const LoginForm = ({ onLogin }) => {
               )}
             </motion.button>
           </motion.form>
-
-          {/* Demo credentials */}
-          <motion.div
-            className="mt-8 pt-6 border-t border-slate-700/50 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-          </motion.div>
         </div>
       </motion.div>
     </div>

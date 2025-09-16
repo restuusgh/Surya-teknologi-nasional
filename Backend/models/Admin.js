@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
 const Admin = sequelize.define('Admin', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -15,4 +15,4 @@ const Admin = sequelize.define('Admin', {
   timestamps: true
 });
 
-module.exports = Admin;
+export default Admin;

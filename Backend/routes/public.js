@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import publicController from '../controllers/publicController.js';
+
 const router = express.Router();
-const publicController = require('../controllers/publicController');
 
 router.get('/products', publicController.getProducts);
 router.get('/portfolio', publicController.getPortfolios);
 
-module.exports = router;
+export default router;

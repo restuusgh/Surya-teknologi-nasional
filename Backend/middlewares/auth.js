@@ -1,6 +1,8 @@
-const jwt = require('jsonwebtoken');
-const Admin = require('../models/Admin');
-require('dotenv').config();
+import jwt from 'jsonwebtoken';
+import Admin from '../models/Admin.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 function generateToken(admin) {
   return jwt.sign({ id: admin.id, email: admin.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -24,4 +26,4 @@ async function protectAdmin(req, res, next) {
   }
 }
 
-module.exports = { protectAdmin, generateToken };
+export { protectAdmin, generateToken };
