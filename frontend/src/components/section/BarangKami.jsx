@@ -197,23 +197,7 @@ const BarangKami = () => {
         </div>
 
         {/* Bottom CTA */}
-        <motion.div
-          className="text-center mt-16 p-8 bg-slate-800/30 backdrop-blur-sm rounded-3xl border border-slate-700/50"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          viewport={{ once: true }}
-        >
-          <h3 className="text-2xl font-bold text-white mb-4">
-            Butuh Konsultasi Produk?
-          </h3>
-          <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-            Tim ahli kami siap membantu Anda memilih solusi sistem parkir yang tepat untuk kebutuhan Anda
-          </p>
-          <button className="bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25">
-            Hubungi Konsultan
-          </button>
-        </motion.div>
+
       </div>
     </section>
   );

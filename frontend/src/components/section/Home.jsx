@@ -1,6 +1,7 @@
 import React from "react";
 import {ReactTyped} from "react-typed";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Car, Shield, Clock, Zap, ChevronRight, Play } from "lucide-react";
 
 const Home = () => {
@@ -133,10 +134,13 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.5, duration: 0.8 }}
               >
-                <button className="group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center space-x-2">
-                  <span>Hubungi Kami</span>
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+                  <Link
+                    to="/login"
+                    className="group bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 flex items-center space-x-2"
+                  >
+                    <span>Login</span>
+                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 <button className="group border-2 border-slate-600 hover:border-cyan-400 text-slate-300 hover:text-cyan-400 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2">
                   <Play className="w-5 h-5" />
                   <span>Lihat Layanan</span>
