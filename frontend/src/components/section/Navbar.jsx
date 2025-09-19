@@ -22,7 +22,8 @@ const Navbar = () => {
         { name: "Semua Layanan", link: "/services" },
         { name: "Perangkat Lunak", link: "/layanan/perangkat-lunak" },
         { name: "Sistem Parkir", link: "/layanan/sistem-parkir" },
-        { name: "Sistem Ticketing", link: "/layanan/sistem-ticketing" }
+        { name: "Sistem Ticketing", link: "/layanan/sistem-ticketing" },
+        { name: "Gate Perumahan", link: "/layanan/gate-perumahan" }
       ]
     },
     { name: "PORTOFOLIO", link: "/portfolio", icon: "💼" },
