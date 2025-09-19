@@ -28,50 +28,12 @@ import SistemTicketing from "./components/detailProduk/SistemTicketing";
 // Auth & Dashboard
 import LoginForm from "./Auth/LoginForm";
 import AdminDashboard from "./Admin/AdminDashboard";
+import AdminLayout from "./Admin/AdminLayout";
 
 // Chat
 import ChatWidget from "./chat/ChatWidget";
 
-
-// 🔹 Layout Admin
-const AdminLayout = ({ children, onLogout }) => {
-  return (
-    <div className="flex h-screen">
-      {/* Sidebar Admin */}
-      <aside className="w-64 bg-gray-900 text-white p-4">
-        <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
-        <ul className="space-y-4">
-          <li>
-            <a href="/admin" className="hover:text-gray-300">
-              Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="/admin/products" className="hover:text-gray-300">
-              Produk
-            </a>
-          </li>
-          <li>
-            <button
-              onClick={onLogout}
-              className="text-red-400 hover:text-red-200"
-            >
-              Logout
-            </button>
-          </li>
-        </ul>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 bg-gray-100 p-6 overflow-y-auto">
-        {children}
-      </main>
-    </div>
-  );
-};
-
-
-// 🔹 Routing dengan animasi
+// Routing dengan animasi
 const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -84,15 +46,17 @@ const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
     navigate("/login");
   };
 
-  // CRUD Produk (sementara dummy)
+  // CRUD Produk
   const handleAddProduct = (newProduct) => {
     setProducts([...products, { id: Date.now(), ...newProduct }]);
   };
+
   const handleUpdateProduct = (id, updatedProduct) => {
     setProducts(
       products.map((p) => (p.id === id ? { ...p, ...updatedProduct } : p))
     );
   };
+
   const handleDeleteProduct = (id) => {
     setProducts(products.filter((p) => p.id !== id));
   };
@@ -117,16 +81,80 @@ const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
         />
 
         {/* Halaman per section */}
-        <Route path="/barangkami" element={<><Transition /><BarangKami /></>} />
-        <Route path="/about" element={<><Transition /><About /></>} />
-        <Route path="/services" element={<><Transition /><Services /></>} />
-        <Route path="/portfolio" element={<><Transition /><Portfolio /></>} />
-        <Route path="/contact" element={<><Transition /><Contact /></>} />
+        <Route 
+          path="/barangkami" 
+          element={
+            <>
+              <Transition />
+              <BarangKami />
+            </>
+          } 
+        />
+        <Route 
+          path="/about" 
+          element={
+            <>
+              <Transition />
+              <About />
+            </>
+          } 
+        />
+        <Route 
+          path="/services" 
+          element={
+            <>
+              <Transition />
+              <Services />
+            </>
+          } 
+        />
+        <Route 
+          path="/portfolio" 
+          element={
+            <>
+              <Transition />
+              <Portfolio />
+            </>
+          } 
+        />
+        <Route 
+          path="/contact" 
+          element={
+            <>
+              <Transition />
+              <Contact />
+            </>
+          } 
+        />
 
         {/* Detail produk */}
-        <Route path="/layanan/perangkat-lunak" element={<><Transition /><PerangkatLunak /></>} />
-        <Route path="/layanan/sistem-parkir" element={<><Transition /><SistemParkir /></>} />
-        <Route path="/layanan/sistem-ticketing" element={<><Transition /><SistemTicketing /></>} />
+        <Route 
+          path="/layanan/perangkat-lunak" 
+          element={
+            <>
+              <Transition />
+              <PerangkatLunak />
+            </>
+          } 
+        />
+        <Route 
+          path="/layanan/sistem-parkir" 
+          element={
+            <>
+              <Transition />
+              <SistemParkir />
+            </>
+          } 
+        />
+        <Route 
+          path="/layanan/sistem-ticketing" 
+          element={
+            <>
+              <Transition />
+              <SistemTicketing />
+            </>
+          } 
+        />
 
         {/* Login */}
         <Route
@@ -146,18 +174,72 @@ const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
 
         {/* Admin Dashboard */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             isAdmin ? (
               <>
                 <Transition />
-                <AdminLayout onLogout={handleLogout}>
-                  <AdminDashboard
-                    products={products}
-                    onAddProduct={handleAddProduct}
-                    onUpdateProduct={handleUpdateProduct}
-                    onDeleteProduct={handleDeleteProduct}
-                  />
+                <AdminLayout>
+                  <Routes>
+                    <Route
+                      index
+                      element={
+                        <AdminDashboard
+                          products={products}
+                          onAddProduct={handleAddProduct}
+                          onUpdateProduct={handleUpdateProduct}
+                          onDeleteProduct={handleDeleteProduct}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                    <Route
+                      path="products"
+                      element={
+                        <AdminDashboard
+                          products={products}
+                          onAddProduct={handleAddProduct}
+                          onUpdateProduct={handleUpdateProduct}
+                          onDeleteProduct={handleDeleteProduct}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                    <Route
+                      path="portfolio"
+                      element={
+                        <div className="p-8">
+                          <div className="max-w-4xl mx-auto">
+                            <h1 className="text-3xl font-bold text-white mb-6">
+                              Portfolio Management
+                            </h1>
+                            <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8">
+                              <p className="text-slate-300 text-center">
+                                Halaman Portfolio Management sedang dalam pengembangan
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    />
+                    <Route
+                      path="users"
+                      element={
+                        <div className="p-8">
+                          <div className="max-w-4xl mx-auto">
+                            <h1 className="text-3xl font-bold text-white mb-6">
+                              User Management
+                            </h1>
+                            <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8">
+                              <p className="text-slate-300 text-center">
+                                Halaman User Management sedang dalam pengembangan
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    />
+                  </Routes>
                 </AdminLayout>
               </>
             ) : (
@@ -178,11 +260,33 @@ const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
   );
 };
 
-
-// 🔹 App Utama
+// App Wrapper - useLocation sekarang berada di dalam Router context
 const AppWrapper = () => {
   const [isAdmin, setIsAdmin] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([
+    {
+      id: 1,
+      name: "Smart Parking System Pro",
+      description: "Sistem parkir otomatis dengan sensor IoT dan AI detection untuk memudahkan pengelolaan parkir",
+      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+      price: "Rp 50.000.000"
+    },
+    {
+      id: 2,
+      name: "RFID Access Control",
+      description: "Sistem akses kontrol dengan teknologi RFID terbaru untuk keamanan maksimal",
+      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop",
+      price: "Rp 15.000.000"
+    },
+    {
+      id: 3,
+      name: "Digital Ticketing System",
+      description: "Sistem tiket digital terintegrasi untuk berbagai jenis event dan transportasi",
+      image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&h=300&fit=crop",
+      price: "Rp 25.000.000"
+    }
+  ]);
+
   const location = useLocation();
 
   // Cek token di localStorage
@@ -190,27 +294,45 @@ const AppWrapper = () => {
     const token = localStorage.getItem("token");
     const admin = localStorage.getItem("admin");
     if (token && admin) {
-      setIsAdmin(JSON.parse(admin));
+      try {
+        setIsAdmin(JSON.parse(admin));
+      } catch (error) {
+        console.error("Error parsing admin data:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("admin");
+      }
     }
   }, []);
 
-  // Kalau path mulai dengan "/admin", jangan tampilkan Navbar & ChatWidget
+  // Debug logging untuk troubleshooting
+  useEffect(() => {
+    const isAdminPage = location.pathname.startsWith("/admin");
+    const isLoginPage = location.pathname === "/login";
+    
+    console.log('Current path:', location.pathname);
+    console.log('Show Navbar:', !isAdminPage && !isLoginPage);
+  }, [location.pathname]);
+
+  // Kondisi untuk menampilkan Navbar & ChatWidget
   const isAdminPage = location.pathname.startsWith("/admin");
+  const isLoginPage = location.pathname === "/login";
+  const shouldShowNavbar = !isAdminPage && !isLoginPage;
 
   return (
     <>
-      {!isAdminPage && <Navbar />}
+      {shouldShowNavbar && <Navbar />}
       <AnimatedRoutes
         isAdmin={isAdmin}
         setIsAdmin={setIsAdmin}
         products={products}
         setProducts={setProducts}
       />
-      {!isAdminPage && <ChatWidget />}
+      {shouldShowNavbar && <ChatWidget />}
     </>
   );
 };
 
+// App Utama
 const App = () => (
   <Router>
     <AppWrapper />

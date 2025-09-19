@@ -12,22 +12,21 @@ const Navbar = () => {
   // Menu list - sekarang pakai route dengan icons
   const menuItems = [
     { name: "HOME", link: "/", icon: "🏠" },
-    { name: "BARANG KAMI", link: "/barangkami", icon: "📦" },
-    { name: "TENTANG KAMI", link: "/about", icon: "ℹ️" },
+    { name: "BARANG", link: "/barangkami", icon: "📦" },
+    { name: "TENTANG ", link: "/about", icon: "ℹ️" },
     { 
-      name: "LAYANAN KAMI", 
+      name: "LAYANAN", 
       link: "/services", 
       icon: "🔧",
       submenu: [
         { name: "Semua Layanan", link: "/services" },
-        { name: "Perangkat Lunak", link: "/services/software" },
-        { name: "Sistem Parkir", link: "/services/parking-system" },
-        { name: "Sistem Ticketing", link: "/services/ticketing-system" },
-        { name: "Gate Perumahan", link: "/services/residential-gate" }
+        { name: "Perangkat Lunak", link: "/layanan/perangkat-lunak" },
+        { name: "Sistem Parkir", link: "/layanan/sistem-parkir" },
+        { name: "Sistem Ticketing", link: "/layanan/sistem-ticketing" }
       ]
     },
     { name: "PORTOFOLIO", link: "/portfolio", icon: "💼" },
-    { name: "KONTAK KAMI", link: "/contact", icon: "📞" },
+    { name: "KONTAK", link: "/contact", icon: "📞" },
   ];
 
   useEffect(() => {
@@ -61,6 +60,14 @@ const Navbar = () => {
     };
   }, [isOpen, isMobile]);
 
+  // Handler untuk toggle hamburger
+  const handleToggleMenu = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Hamburger clicked!', !isOpen);
+    setIsOpen(!isOpen);
+  };
+
   // Komponen untuk item menu mobile dengan submenu
   const MobileMenuItem = ({ item, idx }) => {
     const [submenuOpen, setSubmenuOpen] = useState(false);
@@ -71,52 +78,78 @@ const Navbar = () => {
       <div key={idx}>
         <motion.div
           initial={{ x: -50, opacity: 0 }}
+          exit={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: idx * 0.1, duration: 0.3 }}
         >
-          <Link
-            to={item.link}
-            onClick={(e) => {
-              if (hasSubmenu) {
+          {hasSubmenu ? (
+            <button
+              onClick={(e) => {
                 e.preventDefault();
                 setSubmenuOpen(!submenuOpen);
-              } else {
-                setIsOpen(false);
-              }
-            }}
-            className={`flex items-center justify-between gap-4 px-6 py-4 text-slate-300 transition-all duration-300 relative group ${
-              isActive 
-                ? "bg-slate-800/80 text-cyan-400 border-r-2 border-cyan-400" 
-                : "hover:bg-slate-800/50 hover:text-cyan-300"
-            }`}
-          >
-            <div className="flex items-center gap-4">
-              <motion.span 
-                className="text-xl filter grayscale group-hover:filter-none transition-all duration-300"
-                whileHover={{ scale: 1.2, rotate: -10 }}
-              >
-                {item.icon}
-              </motion.span>
-              <span className="font-medium">{item.name}</span>
-            </div>
-            
-            {hasSubmenu && (
+              }}
+              className={`w-full flex items-center justify-between gap-4 px-6 py-4 text-slate-300 transition-all duration-300 relative group ${
+                isActive 
+                  ? "bg-slate-800/80 text-cyan-400 border-r-2 border-cyan-400" 
+                  : "hover:bg-slate-800/50 hover:text-cyan-300"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <motion.span 
+                  className="text-xl filter grayscale group-hover:filter-none transition-all duration-300"
+                  whileHover={{ scale: 1.2, rotate: -10 }}
+                >
+                  {item.icon}
+                </motion.span>
+                <span className="font-medium">{item.name}</span>
+              </div>
+              
               <ChevronDown 
                 size={16} 
                 className={`transition-transform duration-300 ${submenuOpen ? 'rotate-180' : ''}`} 
               />
-            )}
-            
-            {/* Active indicator */}
-            {isActive && (
-              <motion.div
-                className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-blue-500"
-                layoutId="sidebarActive"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              />
-            )}
-          </Link>
+              
+              {/* Active indicator */}
+              {isActive && (
+                <motion.div
+                  className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-blue-500"
+                  layoutId="sidebarActive"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
+              )}
+            </button>
+          ) : (
+            <Link
+              to={item.link}
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center justify-between gap-4 px-6 py-4 text-slate-300 transition-all duration-300 relative group ${
+                isActive 
+                  ? "bg-slate-800/80 text-cyan-400 border-r-2 border-cyan-400" 
+                  : "hover:bg-slate-800/50 hover:text-cyan-300"
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <motion.span 
+                  className="text-xl filter grayscale group-hover:filter-none transition-all duration-300"
+                  whileHover={{ scale: 1.2, rotate: -10 }}
+                >
+                  {item.icon}
+                </motion.span>
+                <span className="font-medium">{item.name}</span>
+              </div>
+              
+              {/* Active indicator */}
+              {isActive && (
+                <motion.div
+                  className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-blue-500"
+                  layoutId="sidebarActive"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
+              )}
+            </Link>
+          )}
         </motion.div>
         
         {/* Submenu for mobile */}
@@ -153,7 +186,7 @@ const Navbar = () => {
         className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800/50 shadow-2xl"
       >
         {/* Background particles */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={i}
@@ -276,38 +309,46 @@ const Navbar = () => {
               })}
             </nav>
 
-            {/* Hamburger */}
-            <motion.button
-              className="lg:hidden text-2xl sm:text-3xl focus:outline-none text-slate-300 hover:text-cyan-400 transition-colors duration-300 p-2 relative z-50 rounded-lg hover:bg-slate-800/50"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? "Close menu" : "Open menu"}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <AnimatePresence mode="wait">
-                {isOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+            {/* Hamburger Button - Fixed untuk mobile */}
+            <div className="lg:hidden relative z-50">
+              <button
+                type="button"
+                className="focus:outline-none text-slate-300 hover:text-cyan-400 transition-colors duration-300 
+                          p-3 rounded-lg hover:bg-slate-800/50 flex items-center justify-center
+                          touch-manipulation select-none"
+                onClick={handleToggleMenu}
+                aria-label={isOpen ? "Close menu" : "Open menu"}
+                style={{ 
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation'
+                }}
+              >
+                <AnimatePresence mode="wait">
+                  {isOpen ? (
+                    <motion.div
+                      key="close"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <X size={28} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="menu"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Menu size={28} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+            </div>
+
           </div>
         </div>
       </motion.header>
@@ -320,6 +361,17 @@ const Navbar = () => {
         .custom-scrollbar {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+        
+        /* Fix untuk touch devices */
+        button {
+          -webkit-tap-highlight-color: transparent;
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
         }
       `}</style>
 
@@ -351,7 +403,7 @@ const Navbar = () => {
               }}
             >
               {/* Sidebar particles background */}
-              <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {[...Array(12)].map((_, i) => (
                   <motion.div
                     key={i}
