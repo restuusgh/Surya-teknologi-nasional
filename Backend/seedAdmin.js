@@ -16,13 +16,13 @@ async function seed() {
         {
           firstName: "Dea",
           lastName: "Admin",
-          email: "admin1@example.com",
+          email: "anisaedoh@gmail.com",
           password: pwd,
         },
         {
           firstName: "Anisa",
           lastName: "Admin",
-          email: "admin2@example.com",
+          email: "dclestary1804@gmail.com",
           password: pwd,
         },
       ]);
