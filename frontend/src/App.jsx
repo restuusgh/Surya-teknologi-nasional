@@ -27,6 +27,7 @@ import SistemTicketing from "./components/detailProduk/SistemTicketing";
 
 // Auth & Dashboard
 import LoginForm from "./Auth/LoginForm";
+import VerifyLogin from "./Auth/VerifyLogin";
 import AdminDashboard from "./Admin/AdminDashboard";
 import AdminLayout from "./Admin/AdminLayout";
 
@@ -164,6 +165,22 @@ const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
               <Transition />
               <LoginForm
                 onLogin={(adminData) => {
+                  setIsAdmin(adminData);
+                  navigate("/admin");
+                }}
+              />
+            </>
+          }
+        />
+
+        {/* Verify */}
+        <Route
+          path="/verify"
+          element={
+            <>
+              <Transition />
+              <VerifyLogin
+                onVerify={(adminData) => {
                   setIsAdmin(adminData);
                   navigate("/admin");
                 }}

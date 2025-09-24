@@ -1,8 +1,9 @@
 import express from "express";
-import adminController from "../controllers/adminController.js";
+import { loginWithEmailCode, verifyCode } from "../controllers/authController.js";
 
 const router = express.Router();
 
-router.post("/login", adminController.login);
+router.post("/login", loginWithEmailCode);   // endpoint kirim kode verifikasi
+router.post("/verify", verifyCode);          // endpoint verifikasi kode
 
 export default router;
