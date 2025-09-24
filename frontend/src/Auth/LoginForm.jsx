@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -8,6 +9,8 @@ const LoginForm = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,13 +28,11 @@ const LoginForm = ({ onLogin }) => {
 
       if (!res.ok) {
         setError(data.message || "Username atau password salah");
-      } else {
-        // simpan token ke localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("admin", JSON.stringify(data.admin));
-
-        if (onLogin) onLogin(data.admin); // callback kalau ada
-      }
+        } else {
+          // simpan token ke localStorage
+          localStorage.setItem("emailForVerification", username);
+          navigate("/verify");
+        }
     } catch (err) {
       console.error(err);
       setError("Terjadi kesalahan pada server");
