@@ -244,7 +244,7 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Menu */}
-            <nav className="hidden lg:flex xl:space-x-8 lg:space-x-6">
+            <nav className="hidden lg:flex xl:space-x-8 lg:space-x-6 items-center">
               {menuItems.map((item, idx) => {
                 const isActive = location.pathname === item.link;
                 const hasSubmenu = item.submenu;
@@ -362,7 +362,6 @@ const Navbar = () => {
         </div>
       </motion.header>
 
-      {/* Custom CSS untuk menghilangkan scrollbar */}
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           display: none;
@@ -486,6 +485,23 @@ const Navbar = () => {
                 {menuItems.map((item, idx) => (
                   <MobileMenuItem key={idx} item={item} idx={idx} />
                 ))}
+
+                {/* Login Button Mobile */}
+                <motion.div
+                  initial={{ x: -50, opacity: 0 }}
+                  exit={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: menuItems.length * 0.1, duration: 0.3 }}
+                  className="px-6 py-4"
+                >
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
+                  >
+                    <span>Login</span>
+                  </Link>
+                </motion.div>
               </nav>
 
               {/* Divider */}
@@ -520,10 +536,10 @@ const Navbar = () => {
               </div>
 
               {/* Footer */}
-              <div className="relative z-10 p-4 bg-slate-800 text-center border-t border-slate-700">
-                <p className="text-xs text-slate-500">
-                  © 2024 Surya Teknologi Nasional
-                </p>
+              <div className="border-t border-slate-800 py-4 text-center text-xs text-slate-300 font-semibold">
+                © {new Date().getFullYear()}{" "}
+                <span className="text-blue-700">Surya Teknologi Nasional</span>.
+                All rights reserved.
               </div>
             </motion.div>
           </>

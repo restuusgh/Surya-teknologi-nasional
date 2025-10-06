@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import Footer from "../Footer/Footer";
+import Footer from "./components/Footer/Footer";
 import Transition from "./transition/Transition";
 import Navbar from "./components/section/Navbar";
 
