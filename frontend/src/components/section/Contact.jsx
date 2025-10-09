@@ -77,7 +77,7 @@ const Contact = () => {
           );
         } catch (err) {
           console.error("reCAPTCHA execution error:", err);
-          setStatus("Gagal memverifikasi reCAPTCHA ❌");
+          setStatus("Gagal memverifikasi reCAPTCHA");
           setIsSubmitting(false);
           return;
         }
@@ -102,22 +102,22 @@ const Contact = () => {
       console.log("Response data:", data);
 
       if (res.ok) {
-        setStatus("Pesan berhasil dikirim ✅");
+        setStatus("Pesan berhasil dikirim");
         setFormData({ name: "", email: "", message: "" });
         
         // Clear success message after 5 seconds
         setTimeout(() => setStatus(""), 5000);
       } else {
-        setStatus(data.error || `Gagal mengirim pesan (${res.status}) ❌`);
+        setStatus(data.error || `Gagal mengirim pesan (${res.status}) `);
       }
     } catch (err) {
       console.error("Fetch error:", err);
       
       // More specific error messages
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
-        setStatus("Tidak dapat terhubung ke server. Pastikan backend berjalan di localhost:5000 ❌");
+        setStatus("Tidak dapat terhubung ke server. Pastikan backend berjalan di localhost:5000");
       } else {
-        setStatus(`Terjadi kesalahan: ${err.message} ❌`);
+        setStatus(`Terjadi kesalahan: ${err.message}`);
       }
     } finally {
       setIsSubmitting(false);
@@ -200,7 +200,7 @@ const Contact = () => {
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                <label className="text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
                   <User className="w-4 h-4" />
                   Nama Lengkap
                 </label>
@@ -216,7 +216,7 @@ const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                <label className="text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   Email
                 </label>
@@ -232,7 +232,7 @@ const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                <label className="text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
                   <MessageCircle className="w-4 h-4" />
                   Pesan
                 </label>
@@ -245,12 +245,6 @@ const Contact = () => {
                   className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 resize-none"
                   required
                 ></textarea>
-              </div>
-
-              {/* Security Info */}
-              <div className="flex items-center gap-2 text-slate-400 text-sm">
-                <Shield className="w-4 h-4" />
-                <span>Form terlindungi dengan reCAPTCHA dan security system</span>
               </div>
 
               <motion.button

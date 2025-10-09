@@ -4,7 +4,7 @@ import { sendContact, contactMiddleware } from "../controllers/contactController
 const router = express.Router();
 
 // ⭐ Ubah dari "/contact" ke "/" saja
-router.post("/", contactMiddleware, sendContact); // ✅ Benar
+router.post("/", contactMiddleware, sendContact); 
 
 // Route untuk rate limit status (opsional)
 router.get("/limits/:identifier", (req, res) => {

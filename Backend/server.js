@@ -71,3 +71,5 @@ async function start() {
 }
 
 start();
+
+export default app;

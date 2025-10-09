@@ -356,7 +356,7 @@ const AppWrapper = () => {
     }
   }, []);
 
-  // Kondisi untuk menampilkan Navbar & ChatWidget
+
   const isAdminPage = location.pathname.startsWith("/admin");
   const isLoginPage = location.pathname === "/login";
   const shouldShowNavbar = !isAdminPage && !isLoginPage;
