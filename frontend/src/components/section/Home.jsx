@@ -275,122 +275,123 @@ const Home = () => {
         </section>
 
         {/* Layanan Section */}
-        <section className="py-20 bg-slate-800">
-          <div className="container mx-auto px-6 lg:px-8">
-            <motion.div 
-              className="text-center mb-16"
-              initial="hidden"
-              whileInView="visible"
-              exit="exit"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={fadeInUp}
-            >
-              <h2 className="text-4xl font-bold text-white mb-6">
-                Layanan <span className="text-cyan-400">Kami</span>
-              </h2>
-              <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-                Kami menyediakan berbagai solusi teknologi untuk memenuhi
-                kebutuhan bisnis Anda
-              </p>
-            </motion.div>
+<section className="py-20 bg-slate-800">
+  <div className="container mx-auto px-6 lg:px-8">
+    <motion.div 
+      className="text-center mb-16"
+      initial="hidden"
+      whileInView="visible"
+      exit="exit"
+      viewport={{ once: true, amount: 0.3 }}
+      variants={fadeInUp}
+    >
+      <h2 className="text-4xl font-bold text-white mb-6">
+        Layanan <span className="text-cyan-400">Kami</span>
+      </h2>
+      <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+        Kami menyediakan berbagai solusi teknologi untuk memenuhi
+        kebutuhan bisnis Anda
+      </p>
+    </motion.div>
 
-            <motion.div 
-              className="grid md:grid-cols-3 gap-8"
-              initial="hidden"
-              whileInView="visible"
-              exit="exit"
-              viewport={{ once: true, amount: 0.2 }}
-              variants={staggerContainer}
-            >
-              {/* Sistem Parkir */}
-              <motion.div variants={scaleIn}>
-                <Link
-                  to="/services/parking-system"
-                  className="group text-center space-y-4 bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8
-                transition-all duration-300 transform hover:-translate-y-3 hover:scale-105
-                hover:shadow-2xl hover:shadow-cyan-500/30 block"
-                >
-                  <motion.div 
-                    className="w-16 h-16 bg-cyan-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-cyan-500/30 transition-all duration-300"
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <Car className="w-8 h-8 text-cyan-400" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Sistem Parkir
-                  </h3>
-                  <p className="text-slate-400 mb-6 leading-relaxed">
-                    Solusi parkir otomatis dengan teknologi RFID dan sensor pintar
-                    untuk efisiensi maksimal dalam pengelolaan area parkir.
-                  </p>
-                  <div className="flex items-center justify-center text-cyan-400 group-hover:text-cyan-300 transition-colors">
-                    <span className="font-medium">Pelajari Lebih Lanjut</span>
-                    <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              </motion.div>
-
-              {/* Aplikasi Custom */}
-              <motion.div variants={scaleIn}>
-                <Link
-                  to="/services/software"
-                  className="group text-center space-y-4 bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8
-                transition-all duration-300 transform hover:-translate-y-3 hover:scale-105
-                hover:shadow-2xl hover:shadow-blue-500/30 block"
-                >
-                  <motion.div 
-                    className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-all duration-300"
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <Monitor className="w-8 h-8 text-blue-400" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Aplikasi Custom
-                  </h3>
-                  <p className="text-slate-400 mb-6 leading-relaxed">
-                    Pengembangan aplikasi sesuai kebutuhan bisnis dengan teknologi
-                    terdepan dan interface yang user-friendly.
-                  </p>
-                  <div className="flex items-center justify-center text-blue-400 group-hover:text-blue-300 transition-colors">
-                    <span className="font-medium">Pelajari Lebih Lanjut</span>
-                    <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              </motion.div>
-
-              {/* Sistem Ticketing */}
-              <motion.div variants={scaleIn}>
-                <Link
-                  to="/services/ticketing-system"
-                  className="group text-center space-y-4 bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8
-                transition-all duration-300 transform hover:-translate-y-3 hover:scale-105
-                hover:shadow-2xl hover:shadow-emerald-500/30 block"
-                >
-                  <motion.div 
-                    className="w-16 h-16 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500/30 transition-all duration-300"
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <Settings className="w-8 h-8 text-emerald-400" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Sistem Ticketing
-                  </h3>
-                  <p className="text-slate-400 mb-6 leading-relaxed">
-                    Sistem tiket digital terintegrasi untuk berbagai jenis event,
-                    transportasi, dan manajemen antrian.
-                  </p>
-                  <div className="flex items-center justify-center text-emerald-400 group-hover:text-emerald-300 transition-colors">
-                    <span className="font-medium">Pelajari Lebih Lanjut</span>
-                    <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </Link>
-              </motion.div>
-            </motion.div>
+    <motion.div 
+      className="grid md:grid-cols-3 gap-8 items-stretch"
+      initial="hidden"
+      whileInView="visible"
+      exit="exit"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={staggerContainer}
+    >
+      {/* Sistem Parkir */}
+      <motion.div variants={scaleIn} className="flex items-stretch">
+        <Link
+          to="/services/parking-system"
+          className="group text-center space-y-4 bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8
+          transition-all duration-300 transform hover:-translate-y-3 hover:scale-105
+          hover:shadow-2xl hover:shadow-blue-500/30 block md:self-stretch"
+        >
+          <motion.div 
+            className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-all duration-300"
+            whileHover={{ rotate: 360, scale: 1.1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Car className="w-8 h-8 text-cyan-400" />
+          </motion.div>
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Sistem Parkir
+          </h3>
+          <p className="text-slate-400 mb-6 leading-relaxed">
+            Solusi parkir otomatis dengan teknologi RFID dan sensor pintar
+            untuk efisiensi maksimal dalam pengelolaan area parkir.
+          </p>
+          <div className="flex items-center justify-center text-blue-400 group-hover:text-blue-300 transition-colors">
+            <span className="font-medium">Pelajari Lebih Lanjut</span>
+            <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </div>
-        </section>
+        </Link>
+      </motion.div>
+
+      {/* Aplikasi Custom */}
+      <motion.div variants={scaleIn} className="flex items-stretch">
+        <Link
+          to="/services/software"
+          className="group text-center space-y-4 bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8
+          transition-all duration-300 transform hover:-translate-y-3 hover:scale-105
+          hover:shadow-2xl hover:shadow-blue-500/30 block md:self-stretch"
+        >
+          <motion.div 
+            className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-500/30 transition-all duration-300"
+            whileHover={{ rotate: 360, scale: 1.1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Monitor className="w-8 h-8 text-blue-400" />
+          </motion.div>
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Aplikasi Custom
+          </h3>
+          <p className="text-slate-400 mb-6 leading-relaxed">
+            Pengembangan aplikasi sesuai kebutuhan bisnis dengan teknologi
+            terdepan dan interface yang user-friendly.
+          </p>
+          <div className="flex items-center justify-center text-blue-400 group-hover:text-blue-300 transition-colors">
+            <span className="font-medium">Pelajari Lebih Lanjut</span>
+            <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+      </motion.div>
+
+      {/* Sistem Ticketing */}
+      <motion.div variants={scaleIn} className="flex items-stretch">
+        <Link
+          to="/services/ticketing-system"
+          className="group text-center space-y-4 bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8
+          transition-all duration-300 transform hover:-translate-y-3 hover:scale-105
+          hover:shadow-2xl hover:shadow-emerald-500/30 block md:self-stretch"
+        >
+          <motion.div 
+            className="w-16 h-16 bg-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500/30 transition-all duration-300"
+            whileHover={{ rotate: 360, scale: 1.1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Settings className="w-8 h-8 text-emerald-400" />
+          </motion.div>
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Sistem Ticketing
+          </h3>
+          <p className="text-slate-400 mb-6 leading-relaxed">
+            Sistem tiket digital terintegrasi untuk berbagai jenis event,
+            transportasi, dan manajemen antrian.
+          </p>
+          <div className="flex items-center justify-center text-emerald-400 group-hover:text-emerald-300 transition-colors">
+            <span className="font-medium">Pelajari Lebih Lanjut</span>
+            <ChevronRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
+      </motion.div>
+    </motion.div>
+  </div>
+</section>
+
 
         {/* Why Choose Us Section */}
         <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
