@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Clock, Globe, Send, User, MessageCircle, Shield, A
 // Inline config to avoid import issues in demo
 const config = {
   recaptchaSiteKey: "6LfrV9MrAAAAALTe7EdBKP1vpAESZZ-fyxaJnODA",
-  apiUrl: "http://localhost:5000"
+  apiUrl: import.meta.env.VITE_API_URL
 };
 
 const Contact = () => {
