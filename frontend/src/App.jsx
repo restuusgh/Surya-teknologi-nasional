@@ -7,6 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import PortfolioDetail from "./components/PortfolioDetail/PortfolioDetail";
 
 import Footer from "./components/Footer/Footer";
 import Transition from "./transition/Transition";
@@ -79,6 +80,16 @@ const AnimatedRoutes = ({ isAdmin, setIsAdmin, products, setProducts }) => {
         <Route path="/services" element={<><Transition /><Services /></>} />
         <Route path="/portfolio" element={<><Transition /><Portfolio /></>} />
         <Route path="/contact" element={<><Transition /><Contact /></>} />
+
+        <Route
+          path="/portfolio/:id"
+          element={
+            <>
+              <Transition />
+              <PortfolioDetail />
+            </>
+          }
+        />
 
         {/* === Detail Produk / Layanan === */}
         <Route
