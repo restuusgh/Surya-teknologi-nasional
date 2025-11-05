@@ -485,23 +485,6 @@ const Navbar = () => {
                 {menuItems.map((item, idx) => (
                   <MobileMenuItem key={idx} item={item} idx={idx} />
                 ))}
-
-                {/* Login Button Mobile */}
-                <motion.div
-                  initial={{ x: -50, opacity: 0 }}
-                  exit={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: menuItems.length * 0.1, duration: 0.3 }}
-                  className="px-6 py-4"
-                >
-                  <Link
-                    to="/login"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
-                  >
-                    <span>Login</span>
-                  </Link>
-                </motion.div>
               </nav>
 
               {/* Divider */}
