@@ -8,6 +8,7 @@ import publicRoutes from "./routes/public.js";
 import adminRoutes from "./routes/admin.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import chatbotRoutes from "./routes/chatbotRoutes.js"
 import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
@@ -39,7 +40,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contact", contactRoutes)
-
+app.use("/api/chatbot", chatbotRoutes)
 
 app.use((err, req, res, next) => {
   console.error(chalk.red("Error: "), err);
