@@ -76,6 +76,7 @@ const PortfolioDetail = () => {
                         <div className="flex flex-wrap gap-2">
                             {selected.technologies.map((tech, index) => (
                                 <span
+                                
                                     key={index}
                                     className="px-3 py-1 bg-slate-700 text-cyan-300 text-sm rounded-full font-medium"
                                 >
