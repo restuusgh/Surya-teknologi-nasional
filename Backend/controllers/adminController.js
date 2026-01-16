@@ -11,35 +11,43 @@ import { generateToken } from '../middlewares/auth.js';
  * =======================
  */
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    // Cari admin berdasarkan email
-    const admin = await Admin.findOne({ where: { email } });
-    if (!admin) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    if (!username || !password) {
+      return res.status(400).json({
+        message: 'Username dan password wajib diisi',
+      });
     }
 
-    // Bandingkan password dengan bcrypt
+    // Cari admin berdasarkan USERNAME
+    const admin = await Admin.findOne({ where: { username } });
+    if (!admin) {
+      return res.status(401).json({ message: 'Username atau password salah' });
+    }
+
+    // Cek password
     const match = await bcrypt.compare(password, admin.password || '');
     if (!match) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Username atau password salah' });
     }
 
-    // Generate JWT token
+    // Generate JWT
     const token = generateToken(admin);
 
-    res.json({
+    return res.json({
+      message: 'Login berhasil',
       token,
       admin: {
         id: admin.id,
-        email: admin.email,
+        username: admin.username,
         firstName: admin.firstName,
         lastName: admin.lastName,
       },
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

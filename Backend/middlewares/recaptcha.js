@@ -1,4 +1,4 @@
-import axios from 'axios';
+       import axios from 'axios';
 
 export const recaptchaValidation = async (req, res, next) => {
   const { recaptchaToken } = req.body;
@@ -13,7 +13,7 @@ export const recaptchaValidation = async (req, res, next) => {
       error: "reCAPTCHA token diperlukan."
     });
   }
-
+ 
   try {
     const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
     
@@ -22,7 +22,7 @@ export const recaptchaValidation = async (req, res, next) => {
 
     if (!data.success) {
       return res.status(400).json({
-        error: "reCAPTCHA verification failed. Please try again."
+         error: "reCAPTCHA verification failed. Please try again."
       });
     }
 
