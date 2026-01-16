@@ -1,5 +1,7 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 import axios from "axios";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // In-memory storage (gunakan Redis untuk production)
 const rateLimitStore = new Map();
@@ -282,18 +284,20 @@ export const sendContact = async (req, res) => {
   
   console.log('Processing contact form submission:', { name, email });
   
-  try {
-    // Transporter pakai Gmail
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+  // DEVELOPMENT MODE: Skip email sending
+  if (process.env.NODE_ENV === 'development' && process.env.SKIP_EMAIL === 'true') {
+    console.log('⚠️  DEVELOPMENT MODE: Email not sent (SKIP_EMAIL=true)');
+    console.log('📧 Would send to:', email);
+    console.log('💬 Message:', message);
     
+    return res.status(200).json({ 
+      success: true,
+      message: "Pesan berhasil dikirim (dev mode - email skipped)",
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  try {
     // Informasi keamanan
     const securityInfo = `
 IP Address: ${req.ip || 'Unknown'}
@@ -302,178 +306,195 @@ Timestamp: ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}
 Device Fingerprint: ${req.body.deviceFingerprint ? req.body.deviceFingerprint.substring(0, 15) + '...' : 'N/A'}
     `.trim();
     
+    // HTML Template untuk Admin
+    const adminHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8fafc;">
+        <div style="max-width: 600px; margin: 20px auto; background: #f8fafc; padding: 20px;">
+          
+          <!-- Header -->
+          <div style="background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">✉️ Pesan Baru dari Website</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Surya Teknologi Nasional</p>
+          </div>
+          
+          <!-- Content -->
+          <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            
+            <!-- Pengirim -->
+            <div style="margin-bottom: 20px; padding: 15px; background: #e0f2fe; border-left: 4px solid #0891b2; border-radius: 4px;">
+              <p style="margin: 0; color: #0891b2; font-weight: bold; font-size: 12px; text-transform: uppercase;">👤 Pengirim</p>
+              <h2 style="margin: 10px 0 0 0; color: #1e293b; font-size: 20px;">${name}</h2>
+            </div>
+            
+            <!-- Email -->
+            <div style="margin-bottom: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+              <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase;">📧 Email</p>
+              <p style="margin: 5px 0 0 0; font-size: 16px; font-weight: 600;">
+                <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a>
+              </p>
+            </div>
+            
+            <!-- Pesan -->
+            <div style="margin-bottom: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
+              <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; margin-bottom: 10px;">💬 Pesan</p>
+              <p style="margin: 0; color: #334155; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+            </div>
+            
+            <!-- Button Reply -->
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="mailto:${email}?subject=Re: Pesan Anda ke Surya Teknologi Nasional" style="display: inline-block; background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%); color: white; padding: 14px 35px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
+                📧 Balas Email Ini
+              </a>
+            </div>
+            
+            <!-- Security Info -->
+            <div style="margin-top: 30px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
+              <p style="margin: 0; color: #92400e; font-size: 12px; font-weight: bold; text-transform: uppercase;">🔒 Info Keamanan</p>
+              <pre style="margin: 10px 0 0 0; color: #78350f; font-size: 11px; font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word;">${securityInfo}</pre>
+            </div>
+            
+            <!-- Footer -->
+            <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center;">
+              ⏰ Diterima pada: <strong>${new Date().toLocaleString('id-ID', { 
+                timeZone: 'Asia/Jakarta',
+                dateStyle: 'full',
+                timeStyle: 'short'
+              })}</strong>
+            </p>
+          </div>
+          
+        </div>
+      </body>
+      </html>
+    `;
     
-    // 1. EMAIL KE ADMIN 
+    // HTML Template untuk User
+    const userHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8fafc;">
+        <div style="max-width: 600px; margin: 20px auto;">
+          
+          <!-- Header -->
+          <div style="background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Terima Kasih!</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Pesan Anda telah kami terima</p>
+          </div>
+          
+          <!-- Content -->
+          <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            
+            <p style="color: #334155; font-size: 16px; margin-top: 0;">Halo <strong>${name}</strong>,</p>
+            
+            <p style="color: #64748b; line-height: 1.6; font-size: 15px;">
+              Terima kasih telah menghubungi <strong style="color: #0891b2;">Surya Teknologi Nasional</strong>. 
+              Pesan Anda telah kami terima dan tim kami akan segera menghubungi Anda dalam <strong>1x24 jam</strong>.
+            </p>
+            
+            <!-- Ringkasan Pesan -->
+            <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #0891b2;">
+              <p style="margin: 0; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: bold;">Ringkasan Pesan Anda:</p>
+              <p style="margin: 10px 0 0 0; color: #334155; font-style: italic; line-height: 1.5;">"${message.length > 150 ? message.substring(0, 150) + '...' : message}"</p>
+            </div>
+            
+            <!-- Quick Contact -->
+            <div style="background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); padding: 20px; border-radius: 8px; margin: 25px 0;">
+              <p style="margin: 0; color: #0891b2; font-weight: bold; font-size: 16px;">📞 Butuh Respons Lebih Cepat?</p>
+              <p style="margin: 15px 0 0 0; color: #334155; line-height: 1.8;">
+                <strong>WhatsApp:</strong> <a href="https://wa.me/6282215143520" style="color: #0891b2; text-decoration: none; font-weight: 600;">+62 822-1514-3520</a><br>
+                <strong>Telepon:</strong> <span style="color: #334155; font-weight: 600;">+62 822-1514-3520</span><br>
+                <strong>Email:</strong> <a href="mailto:info@suryateknologi.co.id" style="color: #0891b2; text-decoration: none; font-weight: 600;">info@suryateknologi.co.id</a>
+              </p>
+            </div>
+            
+            <!-- Office Hours -->
+            <div style="text-align: center; padding: 15px; background: #fef3c7; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0; color: #92400e; font-size: 14px;">
+                <strong>⏰ Jam Operasional:</strong> Senin - Jumat, 09:00 - 17:00 WIB
+              </p>
+            </div>
+            
+            <!-- Footer -->
+            <p style="color: #94a3b8; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; line-height: 1.6;">
+              Email ini dikirim otomatis, mohon tidak membalas email ini.<br>
+              Untuk pertanyaan lebih lanjut, silakan hubungi kami melalui kontak di atas.<br><br>
+              © ${new Date().getFullYear()} <strong>Surya Teknologi Nasional</strong><br>
+              Jl. Sawah Kurung No.4A, Bandung, Jawa Barat
+            </p>
+          </div>
+          
+        </div>
+      </body>
+      </html>
+    `;
     
-    const adminMailOptions = {
-      from: {
-        name: 'Website Contact Form',
-        address: process.env.EMAIL_USER
-      },
-      to: process.env.EMAIL_USER,
-      replyTo: email, 
+    // KIRIM EMAIL DENGAN RESEND
+    console.log('Sending email to admin via Resend...');
+    
+    // CEK: Apakah sudah verify domain?
+    const hasVerifiedDomain = process.env.RESEND_VERIFIED_DOMAIN === 'true';
+    
+    // MODE TESTING: Kirim semua email ke pengirim saja
+    // MODE PRODUCTION: Kirim ke admin jika sudah verify domain
+    
+    if (!hasVerifiedDomain) {
+      console.log('⚠️  TESTING MODE: Mengirim email ke pengirim saja (belum verify domain)');
+    }
+    
+    // 1. Kirim ke Admin (atau ke pengirim untuk testing)
+    const adminResult = await resend.emails.send({
+      from: 'Surya Teknologi <onboarding@resend.dev>',
+      to: hasVerifiedDomain 
+        ? [process.env.EMAIL_USER]  // Production: kirim ke admin
+        : [email], // Testing: kirim ke pengirim
+      replyTo: email,
       subject: `🔔 Pesan Baru dari ${name}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
-        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8fafc;">
-          <div style="max-width: 600px; margin: 20px auto; background: #f8fafc; padding: 20px;">
-            
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">✉️ Pesan Baru dari Website</h1>
-              <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Surya Teknologi Nasional</p>
-            </div>
-            
-            <!-- Content -->
-            <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-              
-              <!-- Pengirim -->
-              <div style="margin-bottom: 20px; padding: 15px; background: #e0f2fe; border-left: 4px solid #0891b2; border-radius: 4px;">
-                <p style="margin: 0; color: #0891b2; font-weight: bold; font-size: 12px; text-transform: uppercase;">👤 Pengirim</p>
-                <h2 style="margin: 10px 0 0 0; color: #1e293b; font-size: 20px;">${name}</h2>
-              </div>
-              
-              <!-- Email -->
-              <div style="margin-bottom: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
-                <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase;">📧 Email</p>
-                <p style="margin: 5px 0 0 0; font-size: 16px; font-weight: 600;">
-                  <a href="mailto:${email}" style="color: #0891b2; text-decoration: none;">${email}</a>
-                </p>
-              </div>
-              
-              <!-- Pesan -->
-              <div style="margin-bottom: 20px; padding: 15px; background: #f1f5f9; border-radius: 8px;">
-                <p style="margin: 0; color: #64748b; font-size: 12px; text-transform: uppercase; margin-bottom: 10px;">💬 Pesan</p>
-                <p style="margin: 0; color: #334155; line-height: 1.6; white-space: pre-wrap;">${message}</p>
-              </div>
-              
-              <!-- Button Reply -->
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="mailto:${email}?subject=Re: Pesan Anda ke Surya Teknologi Nasional" style="display: inline-block; background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%); color: white; padding: 14px 35px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
-                  📧 Balas Email Ini
-                </a>
-              </div>
-              
-              <!-- Security Info -->
-              <div style="margin-top: 30px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
-                <p style="margin: 0; color: #92400e; font-size: 12px; font-weight: bold; text-transform: uppercase;">🔒 Info Keamanan</p>
-                <pre style="margin: 10px 0 0 0; color: #78350f; font-size: 11px; font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word;">${securityInfo}</pre>
-              </div>
-              
-              <!-- Footer -->
-              <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; text-align: center;">
-                ⏰ Diterima pada: <strong>${new Date().toLocaleString('id-ID', { 
-                  timeZone: 'Asia/Jakarta',
-                  dateStyle: 'full',
-                  timeStyle: 'short'
-                })}</strong>
-              </p>
-            </div>
-            
-          </div>
-        </body>
-        </html>
-      `
-    };
+      html: adminHTML,
+    });
     
-    //  EMAIL AUTO-REPLY KE USER
-    const userMailOptions = {
-      from: {
-        name: 'Surya Teknologi Nasional',
-        address: process.env.EMAIL_USER
-      },
-      to: email, // Email user
+    if (adminResult.error) {
+      throw new Error(`Admin email failed: ${adminResult.error.message}`);
+    }
+    
+    console.log('✅ Email sent' + (hasVerifiedDomain ? ' to admin' : ' to sender (testing mode)') + '. ID:', adminResult.data.id);
+    
+    // 2. Kirim Auto-reply ke User (selalu kirim ke pengirim)
+    console.log('Sending auto-reply to user via Resend...');
+    
+    const userResult = await resend.emails.send({
+      from: 'Surya Teknologi Nasional <onboarding@resend.dev>',
+      to: [email],
       subject: 'Pesan Anda Telah Diterima - Surya Teknologi Nasional',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
-        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8fafc;">
-          <div style="max-width: 600px; margin: 20px auto;">
-            
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">Terima Kasih!</h1>
-              <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Pesan Anda telah kami terima</p>
-            </div>
-            
-            <!-- Content -->
-            <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-              
-              <p style="color: #334155; font-size: 16px; margin-top: 0;">Halo <strong>${name}</strong>,</p>
-              
-              <p style="color: #64748b; line-height: 1.6; font-size: 15px;">
-                Terima kasih telah menghubungi <strong style="color: #0891b2;">Surya Teknologi Nasional</strong>. 
-                Pesan Anda telah kami terima dan tim kami akan segera menghubungi Anda dalam <strong>1x24 jam</strong>.
-              </p>
-              
-              <!-- Ringkasan Pesan -->
-              <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #0891b2;">
-                <p style="margin: 0; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: bold;">Ringkasan Pesan Anda:</p>
-                <p style="margin: 10px 0 0 0; color: #334155; font-style: italic; line-height: 1.5;">"${message.length > 150 ? message.substring(0, 150) + '...' : message}"</p>
-              </div>
-              
-              <!-- Quick Contact -->
-              <div style="background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%); padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <p style="margin: 0; color: #0891b2; font-weight: bold; font-size: 16px;">📞 Butuh Respons Lebih Cepat?</p>
-                <p style="margin: 15px 0 0 0; color: #334155; line-height: 1.8;">
-                  <strong>WhatsApp:</strong> <a href="https://wa.me/6282215143520" style="color: #0891b2; text-decoration: none; font-weight: 600;">+62 822-1514-3520</a><br>
-                  <strong>Telepon:</strong> <span style="color: #334155; font-weight: 600;">+62 822-1514-3520</span><br>
-                  <strong>Email:</strong> <a href="mailto:info@suryateknologi.co.id" style="color: #0891b2; text-decoration: none; font-weight: 600;">info@suryateknologi.co.id</a>
-                </p>
-              </div>
-              
-              <!-- Office Hours -->
-              <div style="text-align: center; padding: 15px; background: #fef3c7; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0; color: #92400e; font-size: 14px;">
-                  <strong>⏰ Jam Operasional:</strong> Senin - Jumat, 09:00 - 17:00 WIB
-                </p>
-              </div>
-              
-              <!-- Footer -->
-              <p style="color: #94a3b8; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; line-height: 1.6;">
-                Email ini dikirim otomatis, mohon tidak membalas email ini.<br>
-                Untuk pertanyaan lebih lanjut, silakan hubungi kami melalui kontak di atas.<br><br>
-                © ${new Date().getFullYear()} <strong>Surya Teknologi Nasional</strong><br>
-                Jl. Sawah Kurung No.4A, Bandung, Jawa Barat
-              </p>
-            </div>
-            
-          </div>
-        </body>
-        </html>
-      `
-    };
+      html: userHTML,
+    });
     
-
-    // KIRIM KEDUA EMAIL
-
-    console.log('Sending email to admin...');
-    await transporter.sendMail(adminMailOptions);
-    console.log('Email sent to admin:', process.env.EMAIL_USER);
+    if (userResult.error) {
+      throw new Error(`User email failed: ${userResult.error.message}`);
+    }
     
-    console.log('Sending auto-reply to user...');
-    await transporter.sendMail(userMailOptions);
-    console.log('Auto-reply sent to user:', email);
+    console.log('✅ Auto-reply sent to user. ID:', userResult.data.id);
     
     res.status(200).json({ 
       success: true,
-      message: "Pesan berhasil dikirim",
+      message: "Pesan berhasil dikirim. Kami akan menghubungi Anda segera.",
       timestamp: new Date().toISOString()
     });
     
   } catch (error) {
-    console.error("Email sending error:", error);
+    console.error("❌ Email sending error:", error);
     res.status(500).json({ 
-      error: "Gagal mengirim pesan",
+      error: "Maaf, terjadi kesalahan saat mengirim pesan. Silakan coba lagi atau hubungi kami via WhatsApp.",
+      whatsapp: "+62 822-1514-3520",
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
