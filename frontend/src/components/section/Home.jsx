@@ -265,6 +265,14 @@ const Home = () => {
                         <Play className="w-5 h-5" />
                         <span>Lihat Layanan</span>
                       </Link>
+
+                        <Link
+                        to="/login"
+                        className="group border-2 border-slate-600 hover:border-cyan-400 text-slate-300 hover:text-cyan-400 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2"
+                      >
+                        <Play className="w-5 h-5" />
+                        <span>Login</span>
+                      </Link>
                     </motion.div>
                   </motion.div>
                 </motion.div>

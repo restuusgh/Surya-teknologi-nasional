@@ -4,7 +4,7 @@ import { Send, MessageCircle, X, Bot, User, Clock } from "lucide-react";
 import axios from "axios";
 
 // URL Flowise Prediction Endpoint kamu
-const API_URL = "http://localhost:3000/api/v1/prediction/719477c8-0221-4bd3-b848-f79014312259";
+const API_URL = "http://localhost:5678/webhook/chatbot";
 
 const ChatBot = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -14,7 +14,6 @@ const ChatBot = ({ isOpen, onClose }) => {
   const [inactiveTimer, setInactiveTimer] = useState(null);
   const messagesEndRef = useRef(null);
 
-  // ✅ Fungsi greeting sesuai jam
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 4 && hour < 11) return "Selamat pagi ☀️";
