@@ -4,7 +4,6 @@ import {
   LayoutDashboard, 
   Package, 
   Briefcase, 
-  Users, 
   Settings,
   ChevronLeft,
   Menu,
@@ -14,7 +13,7 @@ import {
   LogOut
 } from 'lucide-react';
 
-const AdminLayout = ({ children }) => {
+const AdminLayout = ({ children, adminData }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeMenu, setActiveMenu] = useState('dashboard');
 
@@ -22,50 +21,30 @@ const AdminLayout = ({ children }) => {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
     { id: 'products', label: 'Produk', icon: Package, href: '/admin/products' },
     { id: 'portfolio', label: 'Portfolio', icon: Briefcase, href: '/admin/portfolio' },
-    { id: 'users', label: 'Pengguna', icon: Users, href: '/admin/users' },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex relative overflow-hidden">
-      {/* Background particles untuk konsistensi */}
+      {/* Background particles */}
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
-            className={`absolute w-1 h-1 ${
-              i % 4 === 0 ? 'bg-cyan-400/10' :
-              i % 4 === 1 ? 'bg-blue-500/10' :
-              i % 4 === 2 ? 'bg-emerald-400/10' : 'bg-purple-400/10'
-            } rounded-full`}
-            style={{
-              left: `${20 + (i * 67) % 60}%`,
-              top: `${25 + (i * 43) % 50}%`,
-            }}
-            animate={{
-              y: [-10, 10, -10],
-              x: [-8, 8, -8],
-              opacity: [0.1, 0.3, 0.1],
-              scale: [0.5, 1, 0.5]
-            }}
-            transition={{
-              duration: 6 + (i % 2),
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5
-            }}
+            className={`absolute w-1 h-1 ${i % 4 === 0 ? 'bg-cyan-400/10' : i % 4 === 1 ? 'bg-blue-500/10' : i % 4 === 2 ? 'bg-emerald-400/10' : 'bg-purple-400/10'} rounded-full`}
+            style={{ left: `${20 + (i * 67) % 60}%`, top: `${25 + (i * 43) % 50}%` }}
+            animate={{ y: [-10, 10, -10], x: [-8, 8, -8], opacity: [0.1, 0.3, 0.1], scale: [0.5, 1, 0.5] }}
+            transition={{ duration: 6 + (i % 2), repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
           />
         ))}
       </div>
 
-      {/* Enhanced Sidebar */}
+      {/* Sidebar */}
       <AnimatePresence>
         <motion.aside
           initial={{ x: -280 }}
           animate={{ x: isSidebarOpen ? 0 : -280 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className={`${
-            isSidebarOpen ? 'w-80' : 'w-0'
-          } bg-slate-900/80 backdrop-blur-xl border-r border-slate-700/50 text-white relative z-10 overflow-hidden`}
+          className={`${isSidebarOpen ? 'w-80' : 'w-0'} bg-slate-900/80 backdrop-blur-xl border-r border-slate-700/50 text-white relative z-10 overflow-hidden`}
         >
           <div className="p-6 h-full flex flex-col">
             {/* Header Sidebar */}
@@ -76,7 +55,7 @@ const AdminLayout = ({ children }) => {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                    Admin Panel
+                    {adminData?.username || 'Admin Panel'}
                   </h2>
                   <p className="text-xs text-slate-400">Surya Teknologi</p>
                 </div>
@@ -91,26 +70,6 @@ const AdminLayout = ({ children }) => {
               </motion.button>
             </div>
 
-            {/* Admin Profile */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-4 mb-8 border border-slate-700/50">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <User className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-900"></div>
-                </div>
-                <div>
-                  <p className="font-semibold text-white">Admin User</p>
-                  <p className="text-xs text-slate-400">Super Administrator</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-emerald-400">Online</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Navigation Menu */}
             <nav className="flex-1 space-y-2">
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-3">
@@ -119,17 +78,12 @@ const AdminLayout = ({ children }) => {
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
                 const isActive = activeMenu === item.id;
-                
                 return (
                   <motion.a
                     key={item.id}
                     href={item.href}
                     onClick={() => setActiveMenu(item.id)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative group ${
-                      isActive
-                        ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-400 border border-cyan-500/30'
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
-                    }`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative group ${isActive ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/50'}`}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
@@ -137,13 +91,7 @@ const AdminLayout = ({ children }) => {
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-cyan-400' : 'text-slate-400 group-hover:text-white'}`} />
                     <span className="font-medium">{item.label}</span>
-                    {isActive && (
-                      <motion.div
-                        className="absolute right-2 w-2 h-2 bg-cyan-400 rounded-full"
-                        layoutId="activeIndicator"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
+                    {isActive && <motion.div className="absolute right-2 w-2 h-2 bg-cyan-400 rounded-full" layoutId="activeIndicator" transition={{ type: "spring", stiffness: 300, damping: 30 }} />}
                   </motion.a>
                 );
               })}
@@ -151,9 +99,7 @@ const AdminLayout = ({ children }) => {
 
             {/* Quick Actions */}
             <div className="mt-8 pt-6 border-t border-slate-700/50">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-3">
-                Quick Actions
-              </p>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-3">Quick Actions</p>
               <div className="space-y-2">
                 <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all duration-300">
                   <Search className="w-4 h-4" />
@@ -167,13 +113,9 @@ const AdminLayout = ({ children }) => {
               </div>
             </div>
 
-            {/* Logout Button */}
+            {/* Logout */}
             <div className="mt-6">
-              <motion.button
-                className="w-full flex items-center gap-3 px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 rounded-xl transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <motion.button className="w-full flex items-center gap-3 px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 rounded-xl transition-all duration-300" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <LogOut className="w-4 h-4" />
                 <span className="font-medium">Logout</span>
               </motion.button>
@@ -182,82 +124,49 @@ const AdminLayout = ({ children }) => {
         </motion.aside>
       </AnimatePresence>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col relative z-10">
         {/* Top Bar */}
-        <motion.header
-          className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-700/50 px-6 py-4"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
+        <motion.header className="bg-slate-900/50 backdrop-blur-xl border-b border-slate-700/50 px-6 py-4" initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {!isSidebarOpen && (
-                <motion.button
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors text-white"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
+                <motion.button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors text-white" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                   <Menu className="w-5 h-5" />
                 </motion.button>
               )}
               <div>
-                <h1 className="text-lg font-semibold text-white">
-                  {menuItems.find(item => item.id === activeMenu)?.label || 'Dashboard'}
-                </h1>
-                <p className="text-sm text-slate-400">
-                  {new Date().toLocaleDateString('id-ID', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </p>
+                <h1 className="text-lg font-semibold text-white">{menuItems.find(item => item.id === activeMenu)?.label || 'Dashboard'}</h1>
+                <p className="text-sm text-slate-400">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
               </div>
             </div>
 
             {/* Top Bar Actions */}
             <div className="flex items-center gap-3">
               <div className="relative">
-                <button className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors text-slate-300 hover:text-white">
-                  <Search className="w-5 h-5" />
-                </button>
+                <button className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors text-slate-300 hover:text-white"><Search className="w-5 h-5" /></button>
               </div>
               <div className="relative">
-                <button className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors text-slate-300 hover:text-white">
-                  <Bell className="w-5 h-5" />
+                <button className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors text-slate-300 hover:text-white"><Bell className="w-5 h-5" />
                   <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
                 </button>
               </div>
               <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
+                <span className="text-white font-semibold">{adminData?.username?.charAt(0).toUpperCase() || 'A'}</span>
               </div>
             </div>
           </div>
         </motion.header>
 
         {/* Content */}
-        <motion.main
-          className="flex-1 overflow-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
+        <motion.main className="flex-1 overflow-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
           {children}
         </motion.main>
       </div>
 
       {/* Mobile Overlay */}
       {isSidebarOpen && (
-        <motion.div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-5 lg:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setIsSidebarOpen(false)}
-        />
+        <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-5 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsSidebarOpen(false)} />
       )}
     </div>
   );

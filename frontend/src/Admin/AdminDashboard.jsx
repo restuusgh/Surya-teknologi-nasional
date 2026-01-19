@@ -41,7 +41,7 @@ const AdminDashboard = ({
   ],
   onAddProduct = (product) => console.log('Add:', product),
   onUpdateProduct = (id, product) => console.log('Update:', id, product),
-  onDeleteProduct = (id) => console.log('Delete:', id),
+  // onDeleteProduct = (id) => console.log('Delete:', id),
   onLogout = () => console.log('Logout')
 }) => {
   const [isEditing, setIsEditing] = useState(null);
@@ -53,15 +53,15 @@ const AdminDashboard = ({
     price: ''
   });
 
-  const handleEdit = (product) => {
-    setIsEditing(product.id);
-    setEditForm({
-      name: product.name,
-      description: product.description,
-      image: product.image,
-      price: product.price
-    });
-  };
+  // const handleEdit = (product) => {
+  //   setIsEditing(product.id);
+  //   setEditForm({
+  //     name: product.name,
+  //     description: product.description,
+  //     image: product.image,
+  //     price: product.price
+  //   });
+  // };
 
   const handleSave = () => {
     if (isAdding) {
@@ -132,14 +132,14 @@ const AdminDashboard = ({
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex items-center gap-6">
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                {/* <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl">
                   <Settings className="w-8 h-8 text-white" />
-                </div>
+                </div> */}
                 <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
                   <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <h1 className="text-4xl lg:text-5xl font-bold text-white mb-2">
                   Admin <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Dashboard</span>
                 </h1>
@@ -159,7 +159,7 @@ const AdminDashboard = ({
                     })}
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex items-center gap-3">
               <motion.button
@@ -267,32 +267,7 @@ const AdminDashboard = ({
         </motion.div>
 
         {/* Enhanced Action Bar */}
-        <motion.div
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-2">Manajemen Produk</h2>
-            <p className="text-slate-400">Kelola semua produk sistem parkir</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 text-slate-300 rounded-xl transition-all duration-300">
-              <Eye className="w-4 h-4" />
-              Preview
-            </button>
-            <motion.button
-              onClick={handleAdd}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/25"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Plus className="w-5 h-5" />
-              Tambah Produk
-            </motion.button>
-          </div>
-        </motion.div>
+
 
         {/* Enhanced Add/Edit Form */}
         {(isAdding || isEditing) && (
@@ -397,7 +372,7 @@ const AdminDashboard = ({
         )}
 
         {/* Enhanced Products Grid */}
-        <motion.div
+        {/* <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -468,7 +443,7 @@ const AdminDashboard = ({
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </motion.div> */}
 
         {/* Empty state */}
         {products.length === 0 && (
