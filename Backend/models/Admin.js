@@ -24,7 +24,7 @@ const Admin = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: true,   // AMAN untuk data lama
+      allowNull: true,
       unique: true,
     },
     password: {

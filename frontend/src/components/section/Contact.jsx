@@ -37,14 +37,14 @@ const Contact = () => {
 
     try {
       await emailjs.send(
-        "service_j0oy1ag", // SERVICE ID
-        "template_g6q0fe5", // TEMPLATE ID
+        "service_j0oy1ag", 
+        "template_g6q0fe5", 
         {
           name: formData.name,
           email: formData.email,
           message: formData.message,
         },
-        "JLH83wx4e2iUqOaA8" // PUBLIC KEY
+        "JLH83wx4e2iUqOaA8"
       );
 
       setStatus("Pesan berhasil dikirim ✅");

@@ -3,15 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageCircle, X, Bot, User, Clock } from "lucide-react";
 import axios from "axios";
 
-// URL Flowise Prediction Endpoint kamu
-const API_URL = "http://localhost:5678/webhook/chatbot";
+const API_URL = "http://localhost:5000/api/chatbot";
 
 const ChatBot = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [sessionId, setSessionId] = useState(null);
-  const [inactiveTimer, setInactiveTimer] = useState(null);
   const messagesEndRef = useRef(null);
 
   const getGreeting = () => {
@@ -23,52 +21,38 @@ const ChatBot = ({ isOpen, onClose }) => {
   };
 
   useEffect(() => {
-    if (isOpen) initializeChat();
+    if (!isOpen) return;
+
+    if (!sessionId) {
+      const newSession = `session_${Date.now()}_${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
+
+      setSessionId(newSession);
+
+      setMessages([
+        {
+          id: "ai_welcome",
+          sender: "ai",
+          text: `${getGreeting()}! 👋  
+Saya adalah **Asisten AI Surya Technology Nasional**.  
+Silakan tanyakan seputar layanan, produk, dan teknologi kami.`,
+          timestamp: new Date(),
+        },
+      ]);
+    }
   }, [isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const initializeChat = () => {
-    if (sessionId) return;
-    const newSession = `session_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
-    setSessionId(newSession);
-
-    const welcomeMessage = {
-      id: "ai_1",
-      sender: "ai",
-      text: `${getGreeting()}! 👋 Saya Asisten AI dari **Surya Teknologi Nasional**. Saya siap membantu Anda seputar keamanan parkir, CCTV, dan sistem monitoring. Silakan ajukan pertanyaan Anda!`,
-      timestamp: new Date(),
-    };
-
-    setMessages([welcomeMessage]);
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-    if (inactiveTimer) clearTimeout(inactiveTimer);
-
-    const timer = setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        {
-          id: `ai_end_${Date.now()}`,
-          sender: "ai",
-          text: "Terima kasih sudah berbicara dengan saya 😊. Jika Anda butuh bantuan lain, silakan buka chat ini lagi ya!",
-          timestamp: new Date(),
-        },
-      ]);
-    }, 3 * 60 * 1000);
-
-    setInactiveTimer(timer);
-    return () => clearTimeout(timer);
-  }, [messages, isOpen]);
+  }, [messages, isTyping]);
 
   const formatTime = (date) =>
-    date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    new Date(date).toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-  // ✅ Kirim pesan ke Flowise
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -79,35 +63,43 @@ const ChatBot = ({ isOpen, onClose }) => {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
 
     try {
       const response = await axios.post(API_URL, {
-        question: userMessage.text,
-        sessionId: sessionId
+        question: userMessage.text, // ✅ FIX UTAMA
+        sessionId,
       });
 
-      const aiReply = response.data.text || "Terima kasih! Saya akan bantu sebisa saya.";
+      const aiReply =
+        response.data?.reply ||
+        response.data?.text ||
+        "Baik, saya bantu jelaskan.";
 
       setTimeout(() => {
         setIsTyping(false);
-        setMessages(prev => [
+        setMessages((prev) => [
           ...prev,
-          { id: `ai_${Date.now()}`, sender: "ai", text: aiReply, timestamp: new Date() },
+          {
+            id: `ai_${Date.now()}`,
+            sender: "ai",
+            text: aiReply,
+            timestamp: new Date(),
+          },
         ]);
-      }, 600);
-
-    } catch (err) {
-      console.error(err);
+      }, 500);
+    } catch (error) {
+      console.error("CHAT ERROR:", error);
       setIsTyping(false);
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           id: `ai_error_${Date.now()}`,
           sender: "ai",
-          text: "⚠️ Maaf, terjadi kesalahan. Silakan coba lagi nanti.",
+          text:
+            "⚠️ Maaf, sistem sedang sibuk. Silakan coba lagi dalam beberapa saat.",
           timestamp: new Date(),
         },
       ]);
@@ -121,84 +113,89 @@ const ChatBot = ({ isOpen, onClose }) => {
     }
   };
 
-  const TypingIndicator = () => (
-    <div className="flex items-center space-x-2 text-gray-400 text-sm">
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
-      <span>AI sedang mengetik...</span>
-    </div>
-  );
-
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          transition={{ duration: 0.3 }}
-          className="fixed bottom-20 right-5 w-96 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col z-40"
+          exit={{ opacity: 0, y: 40 }}
+          className="fixed bottom-20 right-5 w-96 bg-white border rounded-2xl shadow-2xl flex flex-col z-40"
         >
+          {/* HEADER */}
           <div className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-4 py-3 flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Bot className="w-5 h-5" />
-              <h4 className="font-semibold text-sm">Asisten AI - Surya Teknologi</h4>
+            <div className="flex items-center gap-2">
+              <Bot size={18} />
+              <span className="font-semibold text-sm">
+                Asisten AI - Surya Teknologi
+              </span>
             </div>
-            <button onClick={onClose} className="hover:bg-white/20 rounded-full p-1">
+            <button onClick={onClose}>
               <X size={16} />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+          {/* BODY */}
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 max-h-[60vh]">
             {messages.map((msg) => (
-              <div key={msg.id} className={`flex mb-3 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+              <div
+                key={msg.id}
+                className={`flex mb-3 ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
                 {msg.sender === "ai" && (
-                  <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full mr-2">
+                  <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center mr-2">
                     <Bot size={14} />
                   </div>
                 )}
 
-                <div className={`px-4 py-2 rounded-2xl text-sm max-w-[75%] ${
+                <div
+                  className={`px-4 py-2 rounded-2xl text-sm max-w-[75%] whitespace-pre-line ${
                     msg.sender === "user"
                       ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-white border border-gray-200 text-gray-800 rounded-bl-none"
-                }`}>
+                      : "bg-white border rounded-bl-none"
+                  }`}
+                >
                   {msg.text}
-                  <div className="text-xs mt-1 text-gray-400 flex items-center gap-1">
-                    <Clock size={10} /> {formatTime(msg.timestamp)}
+                  <div className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                    <Clock size={10} />
+                    {formatTime(msg.timestamp)}
                   </div>
                 </div>
 
                 {msg.sender === "user" && (
-                  <div className="w-8 h-8 bg-blue-600 text-white flex items-center justify-center rounded-full ml-2">
+                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center ml-2">
                     <User size={14} />
                   </div>
                 )}
               </div>
             ))}
 
-            {isTyping && <TypingIndicator />}
+            {isTyping && (
+              <div className="text-sm text-gray-400 mt-2">
+                AI sedang mengetik…
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="border-t bg-white p-3 flex items-center space-x-2">
+          {/* INPUT */}
+          <div className="border-t p-3 flex gap-2">
             <input
-              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ketik pesan Anda..."
-              className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onKeyDown={handleKeyPress}
+              placeholder="Tulis pertanyaan Anda…"
+              className="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            <motion.button
-              whileTap={{ scale: 0.9 }}
+            <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition disabled:opacity-50"
+              className="bg-blue-600 text-white p-2 rounded-full disabled:opacity-50"
             >
               <Send size={18} />
-            </motion.button>
+            </button>
           </div>
         </motion.div>
       )}
@@ -208,16 +205,17 @@ const ChatBot = ({ isOpen, onClose }) => {
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="fixed bottom-5 right-5 z-50">
       {!isOpen && (
         <motion.button
           onClick={() => setIsOpen(true)}
-          className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-4 rounded-full shadow-2xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-300"
-          whileHover={{ scale: 1.1, rotate: 5 }}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-4 rounded-full shadow-2xl"
         >
-          <MessageCircle className="w-6 h-6" />
+          <MessageCircle size={24} />
         </motion.button>
       )}
       <ChatBot isOpen={isOpen} onClose={() => setIsOpen(false)} />
