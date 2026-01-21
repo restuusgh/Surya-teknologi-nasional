@@ -11,6 +11,9 @@ import authRoutes from "./routes/authRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 
+import productRoutes from "./routes/productRoutes.js"; 
+
+
 import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
@@ -45,6 +48,9 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/services", serviceRoutes);
 
+app.use("/api/products", productRoutes); 
+
+
 // Error handler
 app.use((err, req, res, next) => {
   console.error(chalk.red("Error:"), err);
@@ -61,7 +67,7 @@ async function start() {
     await sequelize.authenticate();
     console.log(chalk.blue("Database connected"));
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log(chalk.blue("Database synced"));
 
     app.listen(PORT, () => {

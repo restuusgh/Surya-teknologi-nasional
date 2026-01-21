@@ -12,8 +12,13 @@ const Admin = sequelize.define(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
+        indexes: [
+      { 
+        unique: true,
+        fields: ["username"],
+      },
+    ],
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
