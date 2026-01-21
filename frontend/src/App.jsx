@@ -9,6 +9,9 @@ import {
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
+import { ProductProvider } from "./context/ProductContext";
+
+
 /* ================== LAYOUT & UTIL ================== */
 import Transition from "./transition/Transition";
 import Navbar from "./components/section/Navbar";
@@ -171,7 +174,9 @@ const AppInner = () => {
 
 const App = () => (
   <Router>
-    <AppInner />
+    <ProductProvider>
+      <AppInner />
+    </ProductProvider>
   </Router>
 );
 
