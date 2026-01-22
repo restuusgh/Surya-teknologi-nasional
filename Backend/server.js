@@ -10,6 +10,9 @@ import contactRoutes from "./routes/contactRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
+import portfolioRoutes from "./routes/portfolioRoutes.js";
+
+
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -44,6 +47,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/services", serviceRoutes);
+app.use("/api/portfolios", portfolioRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

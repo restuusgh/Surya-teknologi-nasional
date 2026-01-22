@@ -1,9 +1,9 @@
 import rateLimit from "express-rate-limit";
 
-// 🔐 limiter khusus chatbot
+// limiter chatbot
 export const chatLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 menit
-  max: 10, // max 10 chat / menit / IP
+  windowMs: 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -12,17 +12,16 @@ export const chatLimiter = rateLimit({
   }
 });
 
-// limiter lain (punya kamu)
+// limiter IP umum
 export const ipLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
-  keyGenerator: (req) => req.ip,
   message: "Terlalu banyak request dari IP ini. Coba lagi nanti.",
 });
 
+// limiter email (tanpa keyGenerator custom)
 export const emailLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
-  keyGenerator: (req) => req.body.email || req.ip,
-  message: "Terlalu banyak request dari email ini. Coba lagi nanti.",
+  message: "Terlalu banyak request. Coba lagi nanti.",
 });

@@ -1,5 +1,4 @@
 // models/Service.js
-
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 
@@ -8,36 +7,50 @@ const Service = sequelize.define(
   {
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       autoIncrement: true,
+      primaryKey: true,
     },
+
     title: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+
     description: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+
+    image: {
+      type: DataTypes.STRING,
+      allowNull: false, // ⚠️ WAJIB ADA
+    },
+
     icon: {
       type: DataTypes.STRING,
       allowNull: true,
-      comment: "Icon name or URL",
     },
+
     features: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
       allowNull: true,
-      defaultValue: [],
-      comment: "Array of features for this service",
+      get() {
+        const raw = this.getDataValue("features");
+        return raw ? JSON.parse(raw) : [];
+      },
+      set(value) {
+        this.setDataValue("features", JSON.stringify(value));
+      },
     },
+
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
   },
   {
-    tableName: "services",
     timestamps: true,
+    tableName: "services",
   }
 );
 

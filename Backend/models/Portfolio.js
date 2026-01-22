@@ -1,14 +1,24 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database.js";
 
-const Portfolio = sequelize.define('Portfolio', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  title: { type: DataTypes.STRING, allowNull: false },
-  description: { type: DataTypes.TEXT },
-  image: { type: DataTypes.STRING }
+const Portfolio = sequelize.define("Portfolio", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  title: DataTypes.STRING,
+  description: DataTypes.TEXT,
+
+  client: DataTypes.STRING,
+  location: DataTypes.STRING,
+  year: DataTypes.STRING,
+  category: DataTypes.STRING,
+
+  image: DataTypes.STRING,      // gambar utama
+  images: DataTypes.JSON,       // MULTI GAMBAR
+
 }, {
-  tableName: 'portfolios',
-  timestamps: true
+  timestamps: true,
 });
-
 export default Portfolio;

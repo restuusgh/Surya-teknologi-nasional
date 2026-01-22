@@ -1,16 +1,24 @@
 // controllers/serviceController.js
-
 import Service from "../models/Service.js";
 
+/* ================= CREATE ================= */
 export const createService = async (req, res) => {
   try {
-    const { title, description, icon, features } = req.body;
+    const { title, description, image, icon, features } = req.body;
+
+    if (!title || !description || !image) {
+      return res.status(400).json({
+        success: false,
+        message: "title, description, dan image wajib diisi",
+      });
+    }
 
     const service = await Service.create({
       title,
       description,
+      image,
       icon,
-      features,
+      features: features || [],
     });
 
     res.status(201).json({
@@ -19,7 +27,7 @@ export const createService = async (req, res) => {
       data: service,
     });
   } catch (error) {
-    console.error("Error creating service:", error);
+    console.error("Create service error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -27,9 +35,11 @@ export const createService = async (req, res) => {
   }
 };
 
+/* ================= READ ALL ================= */
 export const getAllServices = async (req, res) => {
   try {
     const services = await Service.findAll({
+      where: { isActive: true },
       order: [["createdAt", "DESC"]],
     });
 
@@ -38,7 +48,7 @@ export const getAllServices = async (req, res) => {
       data: services,
     });
   } catch (error) {
-    console.error("Error getting services:", error);
+    console.error("Get services error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -46,11 +56,10 @@ export const getAllServices = async (req, res) => {
   }
 };
 
+/* ================= READ BY ID ================= */
 export const getServiceById = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const service = await Service.findByPk(id);
+    const service = await Service.findByPk(req.params.id);
 
     if (!service) {
       return res.status(404).json({
@@ -64,7 +73,7 @@ export const getServiceById = async (req, res) => {
       data: service,
     });
   } catch (error) {
-    console.error("Error getting service:", error);
+    console.error("Get service error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -72,12 +81,11 @@ export const getServiceById = async (req, res) => {
   }
 };
 
+/* ================= UPDATE ================= */
 export const updateService = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, description, icon, features } = req.body;
-
-    const service = await Service.findByPk(id);
+    const { title, description, image, icon, features } = req.body;
+    const service = await Service.findByPk(req.params.id);
 
     if (!service) {
       return res.status(404).json({
@@ -89,6 +97,7 @@ export const updateService = async (req, res) => {
     await service.update({
       title,
       description,
+      image,
       icon,
       features,
     });
@@ -99,7 +108,7 @@ export const updateService = async (req, res) => {
       data: service,
     });
   } catch (error) {
-    console.error("Error updating service:", error);
+    console.error("Update service error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -107,11 +116,10 @@ export const updateService = async (req, res) => {
   }
 };
 
+/* ================= DELETE ================= */
 export const deleteService = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const service = await Service.findByPk(id);
+    const service = await Service.findByPk(req.params.id);
 
     if (!service) {
       return res.status(404).json({
@@ -127,7 +135,7 @@ export const deleteService = async (req, res) => {
       message: "Service deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting service:", error);
+    console.error("Delete service error:", error);
     res.status(500).json({
       success: false,
       message: error.message,

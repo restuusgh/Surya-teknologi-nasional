@@ -1,4 +1,4 @@
-const projects = [
+/*const projects = [
   {
     id: "1",
     title: "Cikao Park Purwakarta",
@@ -430,4 +430,4 @@ const projects = [
   },
 ];
 
-export default projects;
+export default projects;*/
