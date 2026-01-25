@@ -2,6 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useProducts } from "../../context/ProductContext";
 
+const API_URL = "http://localhost:5000";
+
 const fallbackImages = [
   "/automatic.jpg",
   "/automatic2.jpg",
@@ -29,12 +31,6 @@ const BarangKami = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.length === 0 && (
-            <p className="text-center text-slate-400 col-span-3">
-              Produk belum tersedia
-            </p>
-          )}
-
           {products.map((p, i) => (
             <motion.div
               key={p.id}
@@ -42,23 +38,38 @@ const BarangKami = () => {
               whileHover={{ scale: 1.05 }}
             >
               <img
-                src={p.image || fallbackImages[i % fallbackImages.length]}
+                src={
+                  p.image
+                    ? `${API_URL}${p.image}`
+                    : fallbackImages[i % fallbackImages.length]
+                }
                 onError={(e) =>
                   (e.target.src = fallbackImages[i % fallbackImages.length])
                 }
                 className="bg-white h-64 w-full object-contain rounded-xl mb-4"
               />
 
-              <h3 className="text-white font-bold text-xl">{p.name}</h3>
-              <p className="text-slate-400 text-sm">{p.description}</p>
+              <h3 className="text-white font-bold text-xl">
+                {p.name || "Produk"}
+              </h3>
 
-              <p className="text-cyan-400 font-semibold mt-3">
-                Rp {Number(p.price).toLocaleString("id-ID")}
+              <p className="text-slate-400 text-sm">
+                {p.description || "Deskripsi belum tersedia"}
               </p>
 
-              <button className="mt-4 bg-cyan-600 px-6 py-2 rounded-xl text-white">
+              <p className="text-cyan-400 font-semibold mt-3">
+                Rp {(Number(p.price) || 0).toLocaleString("id-ID")}
+              </p>
+
+              <a
+                href="https://id.shp.ee/Fn5h9B2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 bg-cyan-600 px-6 py-2 rounded-xl text-white hover:bg-cyan-700 transition"
+              >
                 Beli Sekarang
-              </button>
+              </a>
+
             </motion.div>
           ))}
         </div>

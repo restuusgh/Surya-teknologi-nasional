@@ -11,19 +11,13 @@ export const ProductProvider = ({ children }) => {
     setProducts(res.data);
   };
 
-  const addProduct = async (data) => {
-    await api.post("/products", {
-      ...data,
-      price: Number(data.price), 
-    });
+  const addProduct = async (formData) => {
+    await api.post("/products", formData); // ⬅️ JANGAN HEADER
     fetchProducts();
   };
 
-  const updateProduct = async (id, data) => {
-    await api.put(`/products/${id}`, {
-      ...data,
-      price: Number(data.price),
-    });
+  const updateProduct = async (id, formData) => {
+    await api.put(`/products/${id}`, formData);
     fetchProducts();
   };
 

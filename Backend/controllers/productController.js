@@ -1,30 +1,50 @@
 import Product from "../models/Product.js";
 
-export const getProducts = async (req, res, next) => {
-  try {
-    const products = await Product.findAll({
-      order: [["createdAt", "DESC"]],
-    });
-    res.json(products);
-  } catch (err) {
-    next(err);
-  }
+/* ================= GET ================= */
+export const getProducts = async (req, res) => {
+  const products = await Product.findAll({ order: [["id", "ASC"]] });
+  res.json(products);
 };
 
-export const createProduct = async (req, res, next) => {
+/* ================= CREATE ================= */
+export const createProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const { name, description, price } = req.body;
+
+    const product = await Product.create({
+      name,
+      description,
+      price: Number(price),
+      image: req.file ? `/uploads/${req.file.filename}` : null,
+    });
+
     res.status(201).json(product);
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: err.message });
   }
 };
 
-export const deleteProduct = async (req, res, next) => {
+/* ================= UPDATE ================= */
+export const updateProduct = async (req, res) => {
   try {
-    await Product.destroy({ where: { id: req.params.id } });
-    res.json({ success: true });
+    const product = await Product.findByPk(req.params.id);
+    if (!product) return res.status(404).json({ message: "Not found" });
+
+    await product.update({
+      name: req.body.name,
+      description: req.body.description,
+      price: Number(req.body.price),
+      image: req.file ? `/uploads/${req.file.filename}` : product.image,
+    });
+
+    res.json(product);
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: err.message });
   }
+};
+
+/* ================= DELETE ================= */
+export const deleteProduct = async (req, res) => {
+  await Product.destroy({ where: { id: req.params.id } });
+  res.json({ message: "Deleted" });
 };
