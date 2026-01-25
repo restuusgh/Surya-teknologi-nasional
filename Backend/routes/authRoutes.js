@@ -1,9 +1,8 @@
 import express from "express";
-import adminController from "../controllers/adminController.js";
+import { login } from "../controllers/authController.js";
 
 const router = express.Router();
 
-// Login admin pakai username + password
-router.post("/login", adminController.login);
+router.post("/login", login);
 
 export default router;

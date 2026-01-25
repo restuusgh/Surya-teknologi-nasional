@@ -37,6 +37,7 @@ import LoginForm from "./Auth/LoginForm";
 import AdminLayout from "./Admin/AdminLayout";
 import AdminDashboard from "./Admin/AdminDashboard";
 
+
 /* ================== ADMIN SECTIONS ================== */
 import Product from "./Admin/SectionAdmin/Product";
 import Layanan from "./Admin/SectionAdmin/Layanan";
@@ -122,11 +123,7 @@ const AppInner = () => {
                 <Transition />
                 <LoginForm
                   onLogin={(adminData) => {
-                    setIsAdmin(adminData);
-                    localStorage.setItem(
-                      "admin",
-                      JSON.stringify(adminData)
-                    );
+                    setIsAdmin(adminData);localStorage.setItem("admin",JSON.stringify(adminData));
                     navigate("/admin/dashboard");
                   }}
                 />

@@ -27,7 +27,7 @@ const Navbar = () => {
       icon: <FaTools />,
       submenu: [
         { name: "Semua Layanan", link: "/services" },
-        { name: "Perangkat Lunak", link: "/layanan/perangkat-lunak" },
+        { name: "Perangkat Lunak", link: "./rangkat-lunak"},
         { name: "Sistem Parkir", link: "/layanan/sistem-parkir" },
         { name: "Sistem Ticketing", link: "/layanan/sistem-ticketing" },
         { name: "Gate Perumahan", link: "/layanan/gate-perumahan" },

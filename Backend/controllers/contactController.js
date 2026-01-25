@@ -376,7 +376,7 @@ Device Fingerprint: ${req.body.deviceFingerprint ? req.body.deviceFingerprint.su
     
     // HTML Template untuk User
     const userHTML = `
-      <!DOCTYPE html>
+      <!DOCTYPE html>\
       <html>
       <head>
         <meta charset="utf-8">
