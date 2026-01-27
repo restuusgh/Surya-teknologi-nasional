@@ -1,67 +1,101 @@
-import React from "react";
-import { FaLaptopCode, FaCloud, FaMobileAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
-const cardData = [
-  {
-    icon: <FaLaptopCode />,
-    title: "Perangkat Lunak Custom",
-    description:
-      "Membangun aplikasi web dan desktop yang scalable sesuai kebutuhan bisnis Anda.",
-    path: "/layanan/perangkat-lunak",
-  },
-  {
-    icon: <FaCloud />,
-    title: "Sistem Parkir",
-    description:
-      "Memberikan layanan cloud yang aman dan efisien untuk penyimpanan dan pengelolaan data Anda.",
-    path: "/layanan/sistem-parkir",
-  },
-  {
-    icon: <FaMobileAlt />,
-    title: "Sistem Ticketing",
-    description:
-      "Pengembangan aplikasi Android & iOS untuk memudahkan pelanggan mengakses layanan Anda.",
-    path: "/layanan/sistem-ticketing",
-  },
-];
+const API_URL = "http://localhost:5000/api/services";
 
 const Services = () => {
-  const navigate = useNavigate();
+  const { slug } = useParams(); // ambil category dari URL
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((json) => {
+        let data = json.data || [];
+
+        // 🔥 FILTER BERDASARKAN CATEGORY (DARI NAVBAR)
+        if (slug) {
+          data = data.filter(
+            (s) =>
+              s.title
+                .toLowerCase()
+                .replace(/\s+/g, "-") === slug
+          );
+        }
+
+        setServices(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setServices([]);
+        setLoading(false);
+      });
+  }, [slug]);
+
+  // ================= LOADING =================
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+        Loading layanan...
+      </div>
+    );
+  }
+
+  // ================= EMPTY =================
+  if (services.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-red-500">
+        Layanan tidak ditemukan
+      </div>
+    );
+  }
 
   return (
-    <section
-      id="services"
-      className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 px-6"
-    >
-      {/* Judul dan Deskripsi */}
+    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 px-6">
+      {/* HEADER */}
       <div className="max-w-6xl mx-auto text-center mb-16">
-        <h2 className="text-4xl font-bold">Layanan Kami</h2>
-        <p className="mt-4 text-slate-300 max-w-2xl mx-auto">
-          Kami menyediakan berbagai layanan teknologi yang dirancang untuk mendukung
-          pertumbuhan bisnis Anda di era digital.
-        </p>
+        <h2 className="text-4xl font-bold">
+          {slug ? services[0].title : "Layanan Kami"}
+        </h2>
+        {!slug && (
+          <p className="mt-4 text-slate-300 max-w-2xl mx-auto">
+            Kami menyediakan berbagai layanan teknologi untuk mendukung kebutuhan bisnis Anda.
+          </p>
+        )}
       </div>
 
-      {/* Grid Card */}
+      {/* CARD GRID */}
       <div className="max-w-6xl mx-auto grid gap-10 md:grid-cols-3">
-        {cardData.map((item, index) => (
-          <div
-            key={index}
-            onClick={() => navigate(item.path)}
-            className="cursor-pointer bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-xl hover:shadow-cyan-500/10 hover:scale-105 transition-all duration-300 text-center"
+        {services.map((service, i) => (
+          <motion.div
+            key={service.id}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            whileHover={{ scale: 1.05 }}
+            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden shadow-xl"
           >
-            <div className="text-cyan-400 text-5xl mb-6 flex justify-center">
-              {item.icon}
+            {/* IMAGE */}
+            <img
+              src={service.image}
+              alt={service.title}
+              className="w-full h-48 object-cover"
+            />
+
+            {/* CONTENT */}
+            <div className="p-6 text-center">
+              <h3 className="text-xl font-semibold mb-2">
+                {service.title}
+              </h3>
+              <p className="text-slate-300 text-sm line-clamp-3">
+                {service.description}
+              </p>
             </div>
-            <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-            <p className="text-slate-300 text-sm">{item.description}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
-
-      {/* Gradient Overlay Bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent" />
     </section>
   );
 };

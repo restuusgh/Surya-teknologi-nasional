@@ -1,9 +1,13 @@
 import rateLimit, { ipKeyGenerator } from "express-rate-limit"; 
 // 🔄 PERUBAHAN: tambah ipKeyGenerator
 
-// 🔐 limiter khusus chatbot
+// limiter chatbot
 export const chatLimiter = rateLimit({
+
+  windowMs: 60 * 1000,
+
   windowMs: 60 * 1000, // 1 menit
+
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
@@ -19,6 +23,16 @@ export const chatLimiter = rateLimit({
 export const ipLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
+
+  message: "Terlalu banyak request dari IP ini. Coba lagi nanti.",
+});
+
+// limiter email (tanpa keyGenerator custom)
+export const emailLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 5,
+  message: "Terlalu banyak request. Coba lagi nanti.",
+
   keyGenerator: (req) => ipKeyGenerator(req), 
   //  PERUBAHAN
   message: "Terlalu banyak request dari IP ini. Coba lagi nanti.",
@@ -32,4 +46,5 @@ export const emailLimiter = rateLimit({
     req.body?.email || ipKeyGenerator(req),
   //  PERUBAHAN
   message: "Terlalu banyak request dari email ini. Coba lagi nanti.",
+
 });
