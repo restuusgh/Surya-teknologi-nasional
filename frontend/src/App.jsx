@@ -9,7 +9,14 @@ import {
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
+
 /* ===== LAYOUT ===== */
+
+import { ProductProvider } from "./context/ProductContext";
+
+
+/* ================== LAYOUT & UTIL ================== */
+
 import Transition from "./transition/Transition";
 import Navbar from "./components/section/Navbar";
 import Footer from "./components/Footer/Footer";
@@ -29,6 +36,11 @@ import PortfolioDetail from "./components/PortfolioDetail/PortfolioDetail";
 import LoginForm from "./Auth/LoginForm";
 import AdminLayout from "./Admin/AdminLayout";
 import AdminDashboard from "./Admin/AdminDashboard";
+
+
+
+/* ================== ADMIN SECTIONS ================== */
+
 import Product from "./Admin/SectionAdmin/Product";
 import Layanan from "./Admin/SectionAdmin/Layanan";
 import PortfolioAdmin from "./Admin/SectionAdmin/Portofolio";
@@ -86,8 +98,12 @@ const AppInner = () => {
                 <Transition />
                 <LoginForm
                   onLogin={(adminData) => {
+
                     setIsAdmin(adminData);
                     localStorage.setItem("admin", JSON.stringify(adminData));
+
+                    setIsAdmin(adminData);localStorage.setItem("admin",JSON.stringify(adminData));
+
                     navigate("/admin/dashboard");
                   }}
                 />
@@ -124,6 +140,7 @@ const AppInner = () => {
   );
 };
 
+
 export default function App() {
   return (
     <Router>
@@ -131,3 +148,14 @@ export default function App() {
     </Router>
   );
 }
+
+const App = () => (
+  <Router>
+    <ProductProvider>
+      <AppInner />
+    </ProductProvider>
+  </Router>
+);
+
+export default App;
+

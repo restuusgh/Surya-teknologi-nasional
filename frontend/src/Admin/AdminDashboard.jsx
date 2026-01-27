@@ -53,16 +53,6 @@ const AdminDashboard = ({
     price: ''
   });
 
-  // const handleEdit = (product) => {
-  //   setIsEditing(product.id);
-  //   setEditForm({
-  //     name: product.name,
-  //     description: product.description,
-  //     image: product.image,
-  //     price: product.price
-  //   });
-  // };
-
   const handleSave = () => {
     if (isAdding) {
       onAddProduct(editForm);
@@ -139,28 +129,8 @@ const AdminDashboard = ({
                   <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 </div>
               </div>
-              {/* <div>
-                <h1 className="text-4xl lg:text-5xl font-bold text-white mb-2">
-                  Admin <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Dashboard</span>
-                </h1>
-                <p className="text-slate-400 text-lg">Kelola produk sistem parkir otomatis</p>
-                <div className="flex items-center gap-4 mt-2">
-                  <span className="flex items-center gap-2 text-sm text-emerald-400">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    Online
-                  </span>
-                  <span className="text-slate-500 text-sm">
-                    <Calendar className="w-4 h-4 inline mr-1" />
-                    {new Date().toLocaleDateString('id-ID', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </span>
-                </div>
-              </div> */}
             </div>
+
             <div className="flex items-center gap-3">
               <motion.button
                 className="p-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 text-slate-300 rounded-xl transition-all duration-300"
@@ -371,81 +341,6 @@ const AdminDashboard = ({
           </motion.div>
         )}
 
-        {/* Enhanced Products Grid */}
-        {/* <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          {products.map((product, index) => (
-            <motion.div
-              key={product.id}
-              className="group bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl border border-slate-700/50 hover:border-slate-600/70 rounded-3xl p-6 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/10"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 + (index * 0.1) }}
-              whileHover={{ y: -10 }}
-            >
-              <div className="relative overflow-hidden rounded-2xl mb-6">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-56 object-cover rounded-2xl transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute top-4 right-4">
-                  <div className="flex items-center gap-1 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="text-white text-sm font-medium">4.9</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">
-                    {product.name}
-                  </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">{product.description}</p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <p className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                    {product.price}
-                  </p>
-                  <div className="flex items-center gap-2 text-slate-400">
-                    <Eye className="w-4 h-4" />
-                    <span className="text-sm">1.2k views</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-4 border-t border-slate-700/50">
-                  <motion.button
-                    onClick={() => handleEdit(product)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-300 rounded-xl transition-all duration-300 hover:scale-105"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Edit
-                  </motion.button>
-                  <motion.button
-                    onClick={() => onDeleteProduct(product.id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-300 rounded-xl transition-all duration-300 hover:scale-105"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Hapus
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div> */}
-
-        {/* Empty state */}
         {products.length === 0 && (
           <motion.div
             className="text-center py-16"

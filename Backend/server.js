@@ -14,6 +14,9 @@ import portfolioRoutes from "./routes/portfolioRoutes.js";
 
 
 
+import productRoutes from "./routes/productRoutes.js"; 
+
+
 import path from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
@@ -41,13 +44,16 @@ app.use(cookieParser());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth/", authRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/portfolios", portfolioRoutes);
+
+app.use("/api/products", productRoutes); 
+
 
 // Error handler
 app.use((err, req, res, next) => {
@@ -65,7 +71,7 @@ async function start() {
     await sequelize.authenticate();
     console.log(chalk.blue("Database connected"));
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log(chalk.blue("Database synced"));
 
     app.listen(PORT, () => {

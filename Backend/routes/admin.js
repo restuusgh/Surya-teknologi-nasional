@@ -4,10 +4,6 @@ import { protectAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-
-router.post('/login', adminController.login);
-
-
 router.post('/products', protectAdmin, adminController.createProduct);
 router.put('/products/:id', protectAdmin, adminController.updateProduct);
 router.delete('/products/:id', protectAdmin, adminController.deleteProduct);

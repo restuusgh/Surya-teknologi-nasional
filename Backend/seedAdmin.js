@@ -7,7 +7,6 @@ dotenv.config();
 
 async function seed() {
   try {
-    // JANGAN alter kalau production
     await sequelize.sync();
 
     const count = await Admin.count();
@@ -20,23 +19,22 @@ async function seed() {
           username: "deaadmin",
           firstName: "Dea",
           lastName: "Admin",
-          email: "anisaedoh@gmail.com",
+          email: "dea@gmail.com",
           password: pwd,
         },
-        {
-          username: "anisadmin",
-          firstName: "Anisa",
+                {
+          username: "anisaadmin",
+          firstName: "anisa",
           lastName: "Admin",
-          email: "dclestary1804@gmail.com",
+          email: "anisaedoh@gmail.com",
           password: pwd,
         },
       ]);
 
-      console.log("Admin seeded:");
+      console.log("Admin seeded");
       console.log("username: deaadmin | password: admin123");
-      console.log("username: anisadmin | password: admin123");
     } else {
-      console.log("Admin already exists, skipping seed");
+      console.log("Admin already exists");
     }
 
     process.exit(0);

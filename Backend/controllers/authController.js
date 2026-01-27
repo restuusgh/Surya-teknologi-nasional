@@ -1,6 +1,7 @@
 import Admin from "../models/Admin.js";
-import { generateToken } from "../middlewares/auth.js";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../middlewares/auth.js";
+
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
@@ -11,14 +12,13 @@ export const login = async (req, res) => {
     }
 
     const admin = await Admin.findOne({ where: { username } });
-
     if (!admin) {
-      return res.status(401).json({ message: "Username tidak ditemukan" });
+      return res.status(401).json({ message: "Username atau password salah" });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Password salah" });
+      return res.status(401).json({ message: "Username atau password salah" });
     }
 
     const token = generateToken(admin);
@@ -29,11 +29,12 @@ export const login = async (req, res) => {
       admin: {
         id: admin.id,
         username: admin.username,
-        name: `${admin.firstName} ${admin.lastName}`,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
       },
     });
-  } catch (error) {
-    console.error("Login error:", error);
-    return res.status(500).json({ message: "Server error" });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

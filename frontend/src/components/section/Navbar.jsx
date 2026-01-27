@@ -25,6 +25,7 @@ const Navbar = () => {
       name: "LAYANAN",
       link: "/services",
       icon: <FaTools />,
+
      submenu: [
   { name: "Semua Layanan", link: "/services" },
   { name: "Perangkat Lunak", link: "/services/perangkat-lunak" },
@@ -33,6 +34,15 @@ const Navbar = () => {
   { name: "Gate Perumahan", link: "/services/gate-perumahan" },
 ],
 
+
+=======
+      submenu: [
+        { name: "Semua Layanan", link: "/services" },
+        { name: "Perangkat Lunak", link: "./rangkat-lunak"},
+        { name: "Sistem Parkir", link: "/layanan/sistem-parkir" },
+        { name: "Sistem Ticketing", link: "/layanan/sistem-ticketing" },
+        { name: "Gate Perumahan", link: "/layanan/gate-perumahan" },
+      ],
 
     },
     { name: "PORTOFOLIO", link: "/portfolio", icon: <FaBriefcase /> },
